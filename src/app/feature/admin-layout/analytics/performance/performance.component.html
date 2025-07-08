@@ -1,1 +1,119 @@
-<p>performance works!</p>
+<div class="section-header">
+  <div>
+    <h1>System Performance</h1>
+    <p>Monitor system health and performance metrics</p>
+  </div>
+  <button class="btn btn-secondary" (click)="refreshMetrics()">
+    🔄 Refresh
+  </button>
+</div>
+
+<!-- System Health -->
+<div class="stats-grid">
+  <div class="stat-card success">
+    <div class="stat-header">
+      <span class="stat-title">Uptime</span>
+      <span class="stat-icon">✅</span>
+    </div>
+    <div class="stat-value">{{metrics.uptime}}%</div>
+    <div class="stat-change positive">
+      <span>30 days</span>
+    </div>
+  </div>
+  
+  <div class="stat-card" [class]="'stat-card ' + getStatusClass(metrics.cpuUsage, {warning: 70, danger: 85})">
+    <div class="stat-header">
+      <span class="stat-title">CPU Usage</span>
+      <span class="stat-icon">💻</span>
+    </div>
+    <div class="stat-value">{{metrics.cpuUsage}}%</div>
+    <div class="stat-change" [class]="getStatusClass(metrics.cpuUsage, {warning: 70, danger: 85})">
+      <span>{{getCpuStatus()}}</span>
+    </div>
+  </div>
+  
+  <div class="stat-card" [class]="'stat-card ' + getStatusClass(metrics.memoryUsage, {warning: 70, danger: 80})">
+    <div class="stat-header">
+      <span class="stat-title">Memory Usage</span>
+      <span class="stat-icon">🧮</span>
+    </div>
+    <div class="stat-value">{{metrics.memoryUsage}}%</div>
+    <div class="stat-change" [class]="getStatusClass(metrics.memoryUsage, {warning: 70, danger: 80})">
+      <span>{{getMemoryStatus()}}</span>
+    </div>
+  </div>
+  
+  <div class="stat-card success">
+    <div class="stat-header">
+      <span class="stat-title">Disk Space</span>
+      <span class="stat-icon">💾</span>
+    </div>
+    <div class="stat-value">{{metrics.diskSpace}} GB</div>
+    <div class="stat-change positive">
+      <span>Available</span>
+    </div>
+  </div>
+</div>
+
+<!-- Real-time Metrics -->
+<div class="chart-container">
+  <h3>Real-time Performance Metrics</h3>
+  <div class="metrics-grid">
+    <div class="metric-item">
+      <div class="metric-header">
+        <span>API Response Time</span>
+        <span class="metric-value" [class]="getStatusClass(metrics.apiResponseTime, {warning: 150, danger: 200})">
+          {{metrics.apiResponseTime}}ms
+        </span>
+      </div>
+      <div class="metric-bar" [class]="getStatusClass(metrics.apiResponseTime, {warning: 150, danger: 200})"
+           [style.width]="(metrics.apiResponseTime / 250 * 100) + '%'"></div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-header">
+        <span>DB Query Time</span>
+        <span class="metric-value" [class]="getStatusClass(metrics.dbQueryTime, {warning: 100, danger: 150})">
+          {{metrics.dbQueryTime}}ms
+        </span>
+      </div>
+      <div class="metric-bar" [class]="getStatusClass(metrics.dbQueryTime, {warning: 100, danger: 150})"
+           [style.width]="(metrics.dbQueryTime / 200 * 100) + '%'"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Performance Alerts -->
+<div class="card">
+  <h3 class="card-title">Performance Alerts</h3>
+  <div class="alerts-container">
+    @for (alert of alerts; track $index) {
+        <div class="alert-item" [class]="'alert-' + alert.type">
+          <div class="alert-icon">
+            @if (alert.type === 'warning') {
+                <span>⚠️</span>
+            }
+            @if (alert.type === 'error') {
+                <span>❌</span>
+            }
+            @if (alert.type === 'info') {
+                <span>ℹ️</span>
+            }
+          </div>
+          <div class="alert-content">
+            <div class="alert-message">{{alert.message}}</div>
+            <div class="alert-time">{{alert.timestamp | date:'mediumTime'}}</div>
+          </div>
+          <div class="alert-actions">
+            @if (alert.resolved) {
+                <span class="resolved-badge">Resolved</span>
+            }
+            @if (!alert.resolved) {
+                <button class="btn btn-sm btn-secondary" (click)="resolveAlert(alert.id)">
+                  Resolve
+                </button>
+            }
+          </div>
+        </div>
+    }
+  </div>
+</div>

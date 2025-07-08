@@ -1,1 +1,85 @@
-<p>overview works!</p>
+<div class="section-header">
+  <div>
+    <h1>Dashboard Overview</h1>
+    <p>System performance and key metrics</p>
+  </div>
+  <button class="btn btn-primary" (click)="exportReport()">
+    📊 Export Report
+  </button>
+</div>
+
+<!-- Key Metrics -->
+<div class="stats-grid">
+    @for (metric of metrics; track $index) {
+        <div class="stat-card" [class.primary]="metric.cardType === 'primary'"
+          [class.success]="metric.cardType === 'success'" [class.warning]="metric.cardType === 'warning'"
+          [class.danger]="metric.cardType === 'danger'" [class.purple]="metric.cardType === 'purple'">
+          <div class="stat-header">
+            <span class="stat-title">{{metric.title}}</span>
+            <span class="stat-icon">{{metric.icon}}</span>
+          </div>
+          <div class="stat-value">{{metric.value}}</div>
+          <div class="stat-change" [class.positive]="metric.changeType === 'positive'"
+            [class.negative]="metric.changeType === 'negative'">
+            <span>{{metric.changeType === 'positive' ? '↑' : '↓'}}</span>
+            <span>{{metric.change}}</span>
+          </div>
+        </div>
+    }
+</div>
+
+<!-- Feature Usage Stats -->
+<div class="stats-grid feature-metrics">
+    @for (metric of featureMetrics; track $index) {
+        <div class="stat-card" [class.purple]="metric.cardType === 'purple'">
+          <div class="stat-header">
+            <span class="stat-title">{{metric.title}}</span>
+            <span class="stat-icon">{{metric.icon}}</span>
+          </div>
+          <div class="stat-value">{{metric.value}}</div>
+          <div class="stat-change">
+            <span>{{metric.change}}</span>
+          </div>
+        </div>
+    }
+</div>
+
+<!-- Revenue Chart -->
+<div class="chart-container">
+  <h3>Revenue Trend (Last 6 Months)</h3>
+  <div class="revenue-summary">
+    <div class="revenue-item">
+      <div class="revenue-label">FREE Users</div>
+      <div class="revenue-value">{{revenueSummary.freeUsers}}</div>
+    </div>
+    <div class="revenue-item">
+      <div class="revenue-label">PRO Users</div>
+      <div class="revenue-value">{{revenueSummary.proUsers}}</div>
+    </div>
+    <div class="revenue-item">
+      <div class="revenue-label">Churn Rate</div>
+      <div class="revenue-value danger">{{revenueSummary.churnRate}}%</div>
+    </div>
+  </div>
+  <div class="bar-chart">
+    @for (data of revenueData; track $index) {
+        <div class="bar" [style.height]="getBarHeight(data.value)">
+          <div class="bar-value">${{data.value}}</div>
+          <div class="bar-label">{{data.month}}</div>
+        </div>
+    }
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="card">
+  <h3 class="card-title">Recent Activity</h3>
+  <div class="timeline">
+    @for (activity of activities; track $index) {
+        <div class="timeline-item">
+          <div class="timeline-time">{{activity.time}}</div>
+          <div class="timeline-content">{{activity.content}}</div>
+        </div>
+    }
+  </div>
+</div>

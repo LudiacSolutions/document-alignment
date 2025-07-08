@@ -1,1 +1,121 @@
-<p>admin-settings works!</p>
+<div class="section-header">
+  <div>
+    <h1>System Settings</h1>
+    <p>Configure system-wide settings and preferences</p>
+  </div>
+  <div class="settings-actions">
+    <button class="btn btn-secondary" (click)="resetToDefaults()">
+      Reset Defaults
+    </button>
+    <button class="btn btn-primary" (click)="saveSettings()">
+      💾 Save Changes
+    </button>
+  </div>
+</div>
+
+<div class="settings-grid">
+  <!-- General Settings -->
+  <div class="settings-card">
+    <h3 class="settings-card-title">General Settings</h3>
+    <div class="form-group">
+      <label for="systemName">System Name</label>
+      <input type="text" id="systemName" [(ngModel)]="settings.systemName">
+    </div>
+    <div class="form-group">
+      <label for="supportEmail">Support Email</label>
+      <input type="email" id="supportEmail" [(ngModel)]="settings.supportEmail">
+    </div>
+    <div class="form-group">
+      <label for="timezone">Default Timezone</label>
+      <select id="timezone" [(ngModel)]="settings.timezone">
+        <option *ngFor="let tz of timezones" [value]="tz">{{tz}}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Subscription Settings -->
+  <div class="settings-card">
+    <h3 class="settings-card-title">Subscription Settings</h3>
+    <div class="form-group">
+      <label for="proPlanPrice">PRO Plan Price (AUD)</label>
+      <input type="number" id="proPlanPrice" [(ngModel)]="settings.proPlanPrice">
+    </div>
+    <div class="form-group">
+      <label for="tokenTopupPrice">Token Top-up Price (AUD)</label>
+      <input type="number" id="tokenTopupPrice" [(ngModel)]="settings.tokenTopupPrice">
+    </div>
+    <div class="form-group">
+      <label for="tokenTopupAmount">Token Top-up Amount</label>
+      <input type="text" id="tokenTopupAmount" [(ngModel)]="settings.tokenTopupAmount" readonly>
+    </div>
+  </div>
+
+  <!-- Feature Limits -->
+  <div class="settings-card">
+    <h3 class="settings-card-title">Feature Limits</h3>
+    <div class="form-group">
+      <label for="freeMaxValues">FREE Plan - Max Values</label>
+      <input type="number" id="freeMaxValues" [(ngModel)]="settings.freeMaxValues">
+    </div>
+    <div class="form-group">
+      <label for="freeWordCount">FREE Plan - Value Word Count</label>
+      <input type="text" id="freeWordCount" [(ngModel)]="settings.freeWordCount">
+    </div>
+    <div class="form-group">
+      <label for="proMaxDocs">PRO Plan - Max Core Documents</label>
+      <input type="number" id="proMaxDocs" [(ngModel)]="settings.proMaxDocs">
+    </div>
+    <div class="form-group">
+      <label for="proMaxUrls">PRO Plan - Max Reference URLs</label>
+      <input type="number" id="proMaxUrls" [(ngModel)]="settings.proMaxUrls">
+    </div>
+  </div>
+
+  <!-- Email Notifications -->
+  <div class="settings-card">
+    <h3 class="settings-card-title">Email Notifications</h3>
+    <div class="checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="settings.notifications.newUsers">
+        <span class="checkbox-custom"></span>
+        New user registrations
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="settings.notifications.failedPayments">
+        <span class="checkbox-custom"></span>
+        Failed payments
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="settings.notifications.highUsage">
+        <span class="checkbox-custom"></span>
+        High API usage alerts
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="settings.notifications.tokenTopups">
+        <span class="checkbox-custom"></span>
+        Token top-up purchases
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="settings.notifications.dailySummary">
+        <span class="checkbox-custom"></span>
+        Daily summary reports
+      </label>
+    </div>
+  </div>
+
+  <!-- Security -->
+  <div class="settings-card">
+    <h3 class="settings-card-title">Security</h3>
+    <div class="form-group">
+      <label for="sessionTimeout">Session Timeout (minutes)</label>
+      <input type="number" id="sessionTimeout" [(ngModel)]="settings.sessionTimeout">
+    </div>
+    <div class="form-group">
+      <label for="maxLoginAttempts">Max Login Attempts</label>
+      <input type="number" id="maxLoginAttempts" [(ngModel)]="settings.maxLoginAttempts">
+    </div>
+    <button class="btn btn-danger" (click)="forceLogoutAll()">
+      Force Logout All Users
+    </button>
+  </div>
+</div>

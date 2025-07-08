@@ -1,1 +1,69 @@
-<p>logs works!</p>
+<!-- Logs Section -->
+<section class="logs-section">
+  <div class="section-header">
+    <div>
+      <h1>System Logs</h1>
+      <p>View system events and error logs</p>
+    </div>
+    <div class="logs-actions">
+      <select [(ngModel)]="logFilter" (change)="onFilterChange()">
+        <option value="all">All Logs</option>
+        <option value="error">Errors Only</option>
+        <option value="api">API Calls</option>
+        <option value="user">User Actions</option>
+        <option value="billing">Billing Events</option>
+        <option value="value">Value Creation</option>
+        <option value="document">Document Uploads</option>
+        <option value="analysis">Analyses</option>
+      </select>
+      <button class="btn btn-secondary" (click)="exportLogs()">Export Logs</button>
+    </div>
+  </div>
+
+  <div class="data-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Level</th>
+          <th>Category</th>
+          <th>Message</th>
+          <th>User</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of paginatedLogs; track $index) {
+            <tr>
+              <td>{{ log.timestamp | date:'MMM d, y, h:mm:ss a' }}</td>
+              <td>
+                <span class="status-badge"
+                      [ngClass]="{
+                        'suspended': log.level === 'ERROR',
+                        'inactive': log.level === 'WARNING',
+                        'active': log.level === 'INFO'
+                      }">{{ log.level }}</span>
+              </td>
+              <td>{{ log.category }}</td>
+              <td>{{ log.message }}</td>
+              <td>{{ log.user }}</td>
+              <td>
+                <button class="btn btn-sm btn-secondary" (click)="viewLogDetails(log)">Details</button>
+              </td>
+            </tr>
+        }
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+      @for (page of totalPagesArr; track $index) {
+          <button
+                  [class.active]="page === currentPage"
+                  (click)="goToPage(page)">
+            {{ page }}
+          </button>
+      }
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+</section>

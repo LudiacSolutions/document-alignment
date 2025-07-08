@@ -1,1 +1,177 @@
-<p>api-keys works!</p>
+<div class="section-header">
+  <div>
+    <h1>API Key Management</h1>
+    <p>Manage OpenAI and other service API keys</p>
+  </div>
+  <button class="btn btn-primary" (click)="openAddKeyModal()">
+    + Add API Key
+  </button>
+</div>
+
+<!-- Active API Keys -->
+<div class="card">
+  <h3 class="card-title">Active API Keys</h3>
+  <table class="api-keys-table">
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Key</th>
+        <th>Usage</th>
+        <th>Limit</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(key of apiKeys; track $index){
+      <tr>
+        <td>
+          <strong>{{ key.service }}</strong>
+          @if(key.description){
+
+          <div class="key-description">
+            {{ key.description }}
+          </div>
+          }
+        </td>
+        <td>{{ key.key }}</td>
+        <td>
+          @if(key.limit){
+
+          <div>
+            <div class="usage-meter">
+              <div
+                class="usage-fill"
+                [class]="'usage-' + getUsageStatus(key)"
+                [style.width]="getUsagePercentage(key) + '%'"
+              ></div>
+            </div>
+            <div class="usage-text">
+              ${{ key.usage | number }} /
+              {{ key.limit ? "$" + key.limit + "/mo" : "Unlimited" }}
+            </div>
+          </div>
+          } @if (!key.limit) {
+          <div>Unlimited</div>
+          }
+        </td>
+        <td>{{ key.limit ? "$" + key.limit + "/mo" : "Unlimited" }}</td>
+        <td>
+          <span class="status-badge" [class]="'status-' + key.status">
+            {{ key.status }}
+          </span>
+        </td>
+        <td>{{ key.created | date : "mediumDate" }}</td>
+        <td>
+          <button class="btn btn-sm btn-secondary" (click)="rotateKey(key.id)">
+            Rotate
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="revokeKey(key.id)">
+            Revoke
+          </button>
+        </td>
+      </tr>
+
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- API Usage Breakdown -->
+<div class="card">
+  <h3 class="card-title">API Usage Breakdown</h3>
+  <div class="usage-breakdown">
+    @for (key of apiKeys; track $index) {
+    <div class="usage-item">
+      <div class="usage-header">
+        <span>{{ key.service }}</span>
+        <span class="usage-value">${{ key.usage | number }}</span>
+      </div>
+      <div
+        class="usage-bar"
+        [class]="'usage-' + getUsageStatus(key)"
+        [style.width]="getUsagePercentage(key) + '%'"
+      ></div>
+      <div class="usage-details">
+        <span>Last used: {{ key.lastUsed | date : "medium" }}</span>
+        @if (key.limit) {
+        <span
+          >({{ getUsagePercentage(key) | number : "1.0-0" }}% of limit)</span
+        >
+        }
+      </div>
+    </div>
+    }
+  </div>
+</div>
+
+<!-- Model Cost Analysis -->
+<div class="card">
+  <h3 class="card-title">Model Cost Analysis</h3>
+  <div class="model-costs-grid">
+    @for (model of modelCosts; track $index) {
+    <div class="model-cost-item">
+      <div class="model-name">{{ model.model }}</div>
+      <div class="model-cost">${{ model.cost | number }}</div>
+      <div class="model-users">{{ model.users }}</div>
+    </div>
+    }
+  </div>
+</div>
+
+<!-- Add API Key Modal -->
+@if(showAddModal){
+<div class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add API Key</h3>
+      <button (click)="closeAddKeyModal()" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Service</label>
+        <select [(ngModel)]="newKey.service" class="form-control">
+          <option value="openai">OpenAI</option>
+          <option value="stripe">Stripe</option>
+          <option value="sendgrid">SendGrid</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>API Key</label>
+        <input
+          type="password"
+          [(ngModel)]="newKey.key"
+          class="form-control"
+          placeholder="Enter API key"
+        />
+      </div>
+      <div class="form-group">
+        <label>Monthly Limit ($)</label>
+        <input
+          type="number"
+          [(ngModel)]="newKey.limit"
+          class="form-control"
+          placeholder="e.g., 2000"
+        />
+      </div>
+      <div class="form-group">
+        <label>Description (Optional)</label>
+        <input
+          type="text"
+          [(ngModel)]="newKey.description"
+          class="form-control"
+          placeholder="Description"
+        />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeAddKeyModal()">
+        Cancel
+      </button>
+      <button class="btn btn-primary" (click)="addApiKey()">Add Key</button>
+    </div>
+  </div>
+</div>
+}

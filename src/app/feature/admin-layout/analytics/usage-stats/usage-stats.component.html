@@ -1,1 +1,182 @@
-<p>usage-stats works!</p>
+<div class="section-header">
+  <div>
+    <h1>Usage Statistics</h1>
+    <p>Monitor system usage and API consumption</p>
+  </div>
+  <select [(ngModel)]="timeRange" (change)="updateUsageStats()" class="time-range-select">
+    <option value="7">Last 7 days</option>
+    <option value="30" selected>Last 30 days</option>
+    <option value="90">Last 3 months</option>
+  </select>
+</div>
+
+<!-- API Usage -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Total API Calls</span>
+      <span class="stat-icon">🔄</span>
+    </div>
+    <div class="stat-value">{{apiCallsCount | number}}</div>
+    <div class="stat-change positive">
+      <span>↑</span>
+      <span>Normal usage</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Documents Analyzed</span>
+      <span class="stat-icon">📄</span>
+    </div>
+    <div class="stat-value">{{docsAnalyzed | number}}</div>
+    <div class="stat-change positive">
+      <span>↑</span>
+      <span>15% increase</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Values Analyses</span>
+      <span class="stat-icon">🎯</span>
+    </div>
+    <div class="stat-value">{{valuesAnalyses | number}}</div>
+    <div class="stat-change">
+      <span>FREE users</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Document Analyses</span>
+      <span class="stat-icon">📁</span>
+    </div>
+    <div class="stat-value">{{docAnalyses | number}}</div>
+    <div class="stat-change">
+      <span>PRO users</span>
+    </div>
+  </div>
+</div>
+
+<!-- Model Usage Breakdown -->
+<div class="card">
+  <h3 class="card-title">Model Usage Distribution by Plan</h3>
+  <div class="model-usage-grid">
+    <div class="model-usage-card">
+      <h4>FREE Plan Usage</h4>
+      <div class="model-stats">
+        @for (model of modelUsage; track $index) {
+            <div>
+                @if (!getProExclusive(model.model)) {
+                    <div>{{model.model}}: <strong>{{model.freeUsage}}%</strong></div>
+                }
+                @if (getProExclusive(model.model)) {
+                    <div>{{model.model}}: <strong class="pro-exclusive">Not Available</strong></div>
+                }
+            </div>
+        }
+      </div>
+    </div>
+    <div class="model-usage-card">
+      <h4>PRO Plan Usage</h4>
+      <div class="model-stats">
+        @for (model of modelUsage; track $index) {
+            <div>
+              {{model.model}}: <strong>{{model.proUsage}}%</strong>
+            </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Token Limits Reference -->
+<div class="card">
+  <h3 class="card-title">Token Limits by Plan & Model</h3>
+  <table class="token-limits-table">
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>FREE Plan</th>
+        <th>PRO Plan</th>
+        <th>PRO Multiplier</th>
+      </tr>
+    </thead>
+    <tbody>
+        @for (limit of tokenLimits; track $index) {
+            <tr>
+              <td><strong>{{limit.model}}</strong></td>
+              <td>
+                  @if (limit.freeInput > 0) {
+                      <span>
+                        {{limit.freeInput | number}} input / {{limit.freeOutput | number}} output
+                      </span>
+                  }
+                  @else {
+                      <span class="pro-exclusive">Not Available</span>
+                  }
+              </td>
+              <td>
+                  @if (limit.proInput > 0) {
+                      <span>
+                        {{limit.proInput | number}} input / {{limit.proOutput | number}} output
+                      </span>
+                  }
+              </td>
+              <td>
+                  @if (limit.freeInput > 0) {
+                      <span>
+                        {{limit.proInput / limit.freeInput | number:'1.0-0'}}x
+                      </span>
+                  }
+                  @else {
+                        <span class="pro-exclusive">PRO Exclusive</span>
+                  }
+              </td>
+            </tr>
+        }
+    </tbody>
+  </table>
+</div>
+
+<!-- Top Users by Usage -->
+<div class="card">
+  <h3 class="card-title">Top Users by Token Consumption</h3>
+  <table class="top-users-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Plan</th>
+        <th>Model</th>
+        <th>Tokens Used</th>
+        <th>% of Limit</th>
+        <th>Features Used</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        @for (user of topUsers; track $index) {
+            <tr>
+              <td>{{user.email}}</td>
+              <td><span class="plan-badge" [class.free]="user.plan === 'free'" [class.pro]="user.plan === 'pro'">{{user.plan.toUpperCase()}}</span></td>
+              <td>{{user.model}}</td>
+              <td>{{user.tokensUsed | number}}</td>
+              <td>
+                <div class="token-meter">
+                  <div class="token-fill" [class.danger]="user.usagePercent > 90" [class.warning]="user.usagePercent > 70 && user.usagePercent <= 90" [style.width]="user.usagePercent + '%'"></div>
+                </div>
+                {{user.usagePercent}}%
+              </td>
+              <td>{{user.features}}</td>
+              <td>
+                <button class="btn btn-sm btn-secondary">View</button>
+                @if (user.usagePercent > 90) {
+                    <button class="btn btn-sm btn-warning" (click)="notifyUser(user.email)">Notify</button>
+                }
+              </td>
+            </tr>
+        }
+    </tbody>
+  </table>
+</div>
