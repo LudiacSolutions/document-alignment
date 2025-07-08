@@ -18,7 +18,7 @@ import { UserLayoutComponent } from './feature/user-layout/user-layout.component
 
 export const routes: Routes = [
   {
-    path: 'a',
+    path: '',
     component: AdminLayoutComponent,
     canActivate: [],
     children: [
@@ -34,7 +34,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: '',
+    path: 'user',
     component: UserLayoutComponent,
     canActivate: [],
     children: [
