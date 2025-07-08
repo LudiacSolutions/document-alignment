@@ -1,1 +1,22 @@
-<p>header works!</p>
+<header class="header">
+  <div class="header-content">
+    <div style="display: flex; align-items: center; gap: 1rem">
+      <a href="#" class="logo"> 🛡️ Admin Dashboard </a>
+      <span class="admin-badge">SYSTEM ADMIN</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1.5rem">
+      <span style="opacity: 0.9">Welcome, Admin</span>
+      <button
+        class="btn btn-secondary"
+        style="
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        "
+        onclick="logout()"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</header>

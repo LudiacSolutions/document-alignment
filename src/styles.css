@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary: #64748b;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --admin-accent: #8b5cf6;
+  --admin-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+}

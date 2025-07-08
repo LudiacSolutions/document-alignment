@@ -13,10 +13,12 @@ import { ReferencesComponent } from './feature/user-layout/references/references
 import { NewAnalysisComponent } from './feature/user-layout/new-analysis/new-analysis.component';
 import { HistoryComponent } from './feature/user-layout/history/history.component';
 import { AdminSettingsComponent } from './feature/admin-layout/system/admin-settings/admin-settings.component';
+import { AdminLayoutComponent } from './feature/admin-layout/admin-layout.component';
 
 export const routes: Routes = [
   {
     path: '',
+    component: AdminLayoutComponent,
     canActivate: [],
     children: [
       { path: 'overview', component: OverviewComponent},
