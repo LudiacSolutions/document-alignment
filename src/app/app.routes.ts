@@ -14,10 +14,11 @@ import { NewAnalysisComponent } from './feature/user-layout/new-analysis/new-ana
 import { HistoryComponent } from './feature/user-layout/history/history.component';
 import { AdminSettingsComponent } from './feature/admin-layout/system/admin-settings/admin-settings.component';
 import { AdminLayoutComponent } from './feature/admin-layout/admin-layout.component';
+import { UserLayoutComponent } from './feature/user-layout/user-layout.component';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'a',
     component: AdminLayoutComponent,
     canActivate: [],
     children: [
@@ -34,6 +35,7 @@ export const routes: Routes = [
   },
   {
     path: '',
+    component: UserLayoutComponent,
     canActivate: [],
     children: [
       { path: 'dashboard', component: DashboardComponent},
