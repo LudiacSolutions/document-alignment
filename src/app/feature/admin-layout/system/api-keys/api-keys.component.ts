@@ -1,6 +1,7 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 interface ApiKey {
   id: number;
   service: string;
@@ -39,6 +40,8 @@ export class ApiKeysComponent {
     { model: 'GPT-4.1', cost: 198, users: 'Both plans' },
     { model: 'GPT-3.5 Turbo', cost: 114, users: 'Both plans' }
   ];
+
+  constructor(private modalService : NgbModal){}
 
   ngOnInit(): void {
     this.loadApiKeys();
@@ -81,9 +84,8 @@ export class ApiKeysComponent {
     ];
   }
 
-  openAddKeyModal(): void {
-    this.showAddModal = true;
-    this.resetNewKeyForm();
+  openAddKeyModal(content : any): void {
+    this.modalService.open(content)
   }
 
   closeAddKeyModal(): void {

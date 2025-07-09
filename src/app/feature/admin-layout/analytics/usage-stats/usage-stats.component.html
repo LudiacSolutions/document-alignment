@@ -1,3 +1,4 @@
+<!-- usage-stats.component.html -->
 <div class="section-header">
   <div>
     <h1>Usage Statistics</h1>
@@ -67,14 +68,14 @@
       <h4>FREE Plan Usage</h4>
       <div class="model-stats">
         @for (model of modelUsage; track $index) {
-            <div>
-                @if (!getProExclusive(model.model)) {
-                    <div>{{model.model}}: <strong>{{model.freeUsage}}%</strong></div>
-                }
-                @if (getProExclusive(model.model)) {
-                    <div>{{model.model}}: <strong class="pro-exclusive">Not Available</strong></div>
-                }
-            </div>
+          <div>
+            @if (!getProExclusive(model.model)) {
+              <div>{{model.model}}: <strong>{{model.freeUsage}}%</strong></div>
+            }
+            @if (getProExclusive(model.model)) {
+              <div>{{model.model}}: <strong class="pro-exclusive">Not Available</strong></div>
+            }
+          </div>
         }
       </div>
     </div>
@@ -82,9 +83,9 @@
       <h4>PRO Plan Usage</h4>
       <div class="model-stats">
         @for (model of modelUsage; track $index) {
-            <div>
-              {{model.model}}: <strong>{{model.proUsage}}%</strong>
-            </div>
+          <div>
+            {{model.model}}: <strong>{{model.proUsage}}%</strong>
+          </div>
         }
       </div>
     </div>
@@ -104,38 +105,38 @@
       </tr>
     </thead>
     <tbody>
-        @for (limit of tokenLimits; track $index) {
-            <tr>
-              <td><strong>{{limit.model}}</strong></td>
-              <td>
-                  @if (limit.freeInput > 0) {
-                      <span>
-                        {{limit.freeInput | number}} input / {{limit.freeOutput | number}} output
-                      </span>
-                  }
-                  @else {
-                      <span class="pro-exclusive">Not Available</span>
-                  }
-              </td>
-              <td>
-                  @if (limit.proInput > 0) {
-                      <span>
-                        {{limit.proInput | number}} input / {{limit.proOutput | number}} output
-                      </span>
-                  }
-              </td>
-              <td>
-                  @if (limit.freeInput > 0) {
-                      <span>
-                        {{limit.proInput / limit.freeInput | number:'1.0-0'}}x
-                      </span>
-                  }
-                  @else {
-                        <span class="pro-exclusive">PRO Exclusive</span>
-                  }
-              </td>
-            </tr>
-        }
+      @for (limit of tokenLimits; track $index) {
+        <tr>
+          <td><strong>{{limit.model}}</strong></td>
+          <td>
+            @if (limit.freeInput > 0) {
+              <span>
+                {{limit.freeInput | number}} input / {{limit.freeOutput | number}} output
+              </span>
+            }
+            @else {
+              <span class="pro-exclusive">Not Available</span>
+            }
+          </td>
+          <td>
+            @if (limit.proInput > 0) {
+              <span>
+                {{limit.proInput | number}} input / {{limit.proOutput | number}} output
+              </span>
+            }
+          </td>
+          <td>
+            @if (limit.freeInput > 0) {
+              <span>
+                {{limit.proInput / limit.freeInput | number:'1.0-0'}}x
+              </span>
+            }
+            @else {
+              <span class="pro-exclusive">PRO Exclusive</span>
+            }
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>
@@ -156,27 +157,136 @@
       </tr>
     </thead>
     <tbody>
-        @for (user of topUsers; track $index) {
-            <tr>
-              <td>{{user.email}}</td>
-              <td><span class="plan-badge" [class.free]="user.plan === 'free'" [class.pro]="user.plan === 'pro'">{{user.plan.toUpperCase()}}</span></td>
-              <td>{{user.model}}</td>
-              <td>{{user.tokensUsed | number}}</td>
-              <td>
-                <div class="token-meter">
-                  <div class="token-fill" [class.danger]="user.usagePercent > 90" [class.warning]="user.usagePercent > 70 && user.usagePercent <= 90" [style.width]="user.usagePercent + '%'"></div>
-                </div>
-                {{user.usagePercent}}%
-              </td>
-              <td>{{user.features}}</td>
-              <td>
-                <button class="btn btn-sm btn-secondary">View</button>
-                @if (user.usagePercent > 90) {
-                    <button class="btn btn-sm btn-warning" (click)="notifyUser(user.email)">Notify</button>
-                }
-              </td>
-            </tr>
-        }
+      @for (user of topUsers; track $index) {
+        <tr>
+          <td>{{user.email}}</td>
+          <td><span class="plan-badge" [class.free]="user.plan === 'free'" [class.pro]="user.plan === 'pro'">{{user.plan.toUpperCase()}}</span></td>
+          <td>{{user.model}}</td>
+          <td>{{user.tokensUsed | number}}</td>
+          <td>
+            <div class="token-meter">
+              <div class="token-fill" 
+                   [class.danger]="user.usagePercent > 90" 
+                   [class.warning]="user.usagePercent > 70 && user.usagePercent <= 90" 
+                   [style.width]="user.usagePercent + '%'"></div>
+            </div>
+            {{user.usagePercent}}%
+          </td>
+          <td>{{user.features}}</td>
+          <td>
+            <button class="btn btn-sm btn-secondary" (click)="openUserDetails(userDetailsModal, user)">View</button>
+            @if (user.usagePercent > 90) {
+              <button class="btn btn-sm btn-warning" (click)="notifyUser(user.email)">Notify</button>
+            }
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>
+
+<!-- User Token Consumption Details Modal -->
+<ng-template #userDetailsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">User Token Consumption Details</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem">
+      <div>
+        <h4>Account Information</h4>
+        <table style="width: 100%; margin-top: 1rem">
+          <tr>
+            <td style="padding: 0.5rem 0; color: #64748b">Name:</td>
+            <td style="padding: 0.5rem 0">{{currentViewingUser.name}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 0; color: #64748b">Email:</td>
+            <td style="padding: 0.5rem 0">{{currentViewingUser.email}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 0; color: #64748b">Plan:</td>
+            <td style="padding: 0.5rem 0">
+              <span class="plan-badge" [class.pro]="currentViewingUser.plan === 'pro'">
+                {{currentViewingUser.plan.toUpperCase()}}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 0; color: #64748b">Last Active:</td>
+            <td style="padding: 0.5rem 0">{{currentViewingUser.lastActive | date:'MMM d, y'}}</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <h4>Usage Statistics</h4>
+        <div style="margin-top: 1rem">
+          <div style="margin-bottom: 1rem">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+              <span>Token Usage</span>
+              <span>{{currentViewingUser.usagePercent}}% of {{currentViewingUser.tokenLimit | number}} tokens</span>
+            </div>
+            <div class="token-meter">
+              <div class="token-fill" 
+                   [class.danger]="currentViewingUser.usagePercent > 90" 
+                   [class.warning]="currentViewingUser.usagePercent > 70 && currentViewingUser.usagePercent <= 90" 
+                   [style.width]="currentViewingUser.usagePercent + '%'"></div>
+            </div>
+          </div>
+          <table style="width: 100%">
+            <tr>
+              <td style="padding: 0.5rem 0; color: #64748b">Model:</td>
+              <td style="padding: 0.5rem 0">{{currentViewingUser.model}}</td>
+            </tr>
+            <tr>
+              <td style="padding: 0.5rem 0; color: #64748b">Tokens Used:</td>
+              <td style="padding: 0.5rem 0">{{currentViewingUser.tokensUsed | number}}</td>
+            </tr>
+            <tr>
+              <td style="padding: 0.5rem 0; color: #64748b">Analyses Completed:</td>
+              <td style="padding: 0.5rem 0">{{currentViewingUser.analysesCompleted}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem">
+      <h4>Recent Activity</h4>
+      <div class="activity-graph">
+        @for (day of [0,1,2,3,4,5,6]; let i = $index; track $index) {
+          <div 
+               class="activity-bar" 
+               [style.height]="(20 + Math.random() * 80) + '%'"
+               [style.left]="(i * (100/7) + 2) + '%'"
+               [title]="'Day ' + (i + 1) + ' activity'">
+          </div>
+        }
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem">
+      <h4>Token Limits</h4>
+      <table style="width: 100%; margin-top: 1rem">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Input Tokens</th>
+            <th>Output Tokens</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{currentViewingUser.model}}</td>
+            <td>{{getModelLimits(currentViewingUser.model || '').input | number}}</td>
+            <td>{{getModelLimits(currentViewingUser.model || '').output | number}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Close click')">Close</button>
+    <button type="button" class="btn btn-warning" (click)="notifyUser(currentViewingUser.email || '')">Notify User</button>
+  </div>
+</ng-template>

@@ -28,7 +28,7 @@ ul {
   margin: 0;
 }
 
-ul>li {
+ul > li {
   list-style: none;
 }
 
@@ -75,11 +75,33 @@ body {
   background-color: var(--primary);
   border: 1px solid var(--primary);
   color: white;
-
 }
 
 .btn-cust-primary:hover {
   border: 1px solid var(--primary);
   background-color: white;
   color: var(--primaryColor);
+}
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.form-group {
+  margin-bottom: 1.5rem;
 }

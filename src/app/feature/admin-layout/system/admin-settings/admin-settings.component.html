@@ -28,7 +28,9 @@
     <div class="form-group">
       <label for="timezone">Default Timezone</label>
       <select id="timezone" [(ngModel)]="settings.timezone">
-        <option *ngFor="let tz of timezones" [value]="tz">{{tz}}</option>
+        @for (tz of timezones; track $index) {
+        <option [value]="tz">{{tz}}</option>
+        }
       </select>
     </div>
   </div>

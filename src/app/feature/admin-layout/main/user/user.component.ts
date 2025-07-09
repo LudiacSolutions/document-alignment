@@ -1,13 +1,14 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 interface User {
   id: number;
   name: string;
   email: string;
   plan: 'free' | 'pro';
-  status: string;
+  status: 'active' | 'inactive' | 'suspended';
   joined: Date;
   lastActive: Date;
   tokenUsage: number;
@@ -18,11 +19,13 @@ interface User {
   refsAdded?: number;
   tokenTopups?: number;
 }
+
 @Component({
   selector: 'app-user',
-  imports: [FormsModule,DatePipe],
+  imports: [FormsModule, DatePipe, DecimalPipe],
   templateUrl: './user.component.html',
-  styleUrl: './user.component.css'
+  styleUrls: ['./user.component.css'],
+  providers: [NgbModalConfig, NgbModal],
 })
 export class UserComponent {
   users: User[] = [];
@@ -31,7 +34,25 @@ export class UserComponent {
   currentPage = 1;
   itemsPerPage = 10;
   searchTerm = '';
+  Math = Math;
   planFilter: 'all' | 'free' | 'pro' = 'all';
+  private modalRef?: NgbModalRef;
+  currentViewingUser: User = {
+      id: 1,
+      name: 'Sarah Chen',
+      email: 'sarah.chen@example.com',
+      plan: 'pro',
+      status: 'active',
+      joined: new Date('2023-01-15'),
+      lastActive: new Date(),
+      tokenUsage: 65,
+      preferredModel: 'gpt45',
+      analysesCompleted: 12,
+      valuesCreated: 0,
+      coreDocsUploaded: 5,
+      refsAdded: 2,
+      tokenTopups: 1
+  };
 
   userStats = {
     total: 247,
@@ -39,6 +60,14 @@ export class UserComponent {
     newThisMonth: 31,
     suspended: 3
   };
+
+  constructor(
+    config: NgbModalConfig,
+    private modalService: NgbModal,
+  ) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+  }
 
   ngOnInit(): void {
     this.initializeUsers();
@@ -58,7 +87,7 @@ export class UserComponent {
         name: names[i % names.length] + ' ' + (Math.floor(i / names.length) + 1),
         email: `user${i + 1}@example.com`,
         plan: plan,
-        status: ['active', 'active', 'active', 'suspended', 'inactive'][Math.floor(Math.random() * 5)],
+        status: ['active', 'active', 'active', 'suspended', 'inactive'][Math.floor(Math.random() * 5)] as 'active' | 'inactive' | 'suspended',
         joined: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
         lastActive: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
         tokenUsage: Math.floor(Math.random() * 100),
@@ -135,7 +164,7 @@ export class UserComponent {
   }
 
   bulkSuspend(): void {
-    if (confirm(`Suspend ${this.selectedUsers.length} users?`)) {
+    if (this.selectedUsers.length && confirm(`Suspend ${this.selectedUsers.length} users?`)) {
       this.users.forEach(user => {
         if (this.selectedUsers.includes(user.id)) {
           user.status = 'suspended';
@@ -143,11 +172,12 @@ export class UserComponent {
       });
       this.userStats.suspended += this.selectedUsers.length;
       this.selectedUsers = [];
+      this.filterUsers();
     }
   }
 
   bulkUpgrade(): void {
-    if (confirm(`Upgrade ${this.selectedUsers.length} users to PRO?`)) {
+    if (this.selectedUsers.length && confirm(`Upgrade ${this.selectedUsers.length} users to PRO?`)) {
       let upgraded = 0;
       this.users.forEach(user => {
         if (this.selectedUsers.includes(user.id) && user.plan === 'free') {
@@ -161,7 +191,7 @@ export class UserComponent {
   }
 
   bulkDelete(): void {
-    if (confirm(`Delete ${this.selectedUsers.length} users? This action cannot be undone.`)) {
+    if (this.selectedUsers.length && confirm(`Delete ${this.selectedUsers.length} users? This action cannot be undone.`)) {
       this.users = this.users.filter(user => !this.selectedUsers.includes(user.id));
       this.userStats.total -= this.selectedUsers.length;
       this.selectedUsers = [];
@@ -170,9 +200,9 @@ export class UserComponent {
   }
 
   getModelDisplay(model: string): string {
-    return model === 'gpt45' ? 'GPT-4.5' : 
+    return model === 'gpt45' ? 'GPT-4.5 Turbo' : 
            model === 'gpt4o' ? 'GPT-4o' : 
-           model === 'gpt41' ? 'GPT-4.1' : 'GPT-3.5';
+           model === 'gpt41' ? 'GPT-4.1' : 'GPT-3.5 Turbo';
   }
 
   getFeatureUsage(user: User): string {
@@ -182,42 +212,63 @@ export class UserComponent {
   }
 
   getPageNumbers(): number[] {
-  const pages: number[] = [];
-  const maxVisiblePages = 5;
-  
-  if (this.totalPages <= maxVisiblePages) {
-    for (let i = 1; i <= this.totalPages; i++) {
-      pages.push(i);
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      const start = Math.max(2, this.currentPage - 1);
+      const end = Math.min(this.totalPages - 1, this.currentPage + 1);
+      
+      if (start > 2) {
+        pages.push(-1);
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      if (end < this.totalPages - 1) {
+        pages.push(-1);
+      }
+      
+      pages.push(this.totalPages);
     }
-  } else {
-    // Always show first page
-    pages.push(1);
     
-    // Show current page and neighbors
-    const start = Math.max(2, this.currentPage - 1);
-    const end = Math.min(this.totalPages - 1, this.currentPage + 1);
-    
-    if (start > 2) {
-      pages.push(-1); // Ellipsis indicator
-    }
-    
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    
-    if (end < this.totalPages - 1) {
-      pages.push(-1); // Ellipsis indicator
-    }
-    
-    // Always show last page
-    pages.push(this.totalPages);
+    return pages;
   }
-  
-  return pages;
-}
 
-showAddUserModal(): void {
-  // In a real app, this would open a modal
-  console.log('Showing add user modal');
-}
+  open(content: any, user?: User) {
+    if (user) {
+      this.currentViewingUser = user;
+    }
+    this.modalRef = this.modalService.open(content, { size: 'lg' });
+  }
+
+  suspendUserFromView() {
+    if (this.currentViewingUser) {
+      this.currentViewingUser.status = 'suspended';
+      this.userStats.suspended++;
+      this.modalRef?.close();
+    }
+  }
+
+  getRecentAnalyses(user: User | null): any[] {
+    if (!user) return [];
+    
+    return user.plan === 'free' 
+      ? [
+          { type: 'Values', date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), items: '3 values', alignment: 87, tokens: 3400 },
+          { type: 'Values', date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), items: '2 values', alignment: 92, tokens: 2100 }
+        ]
+      : [
+          { type: 'Documents', date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), items: '2 docs, 1 URL', alignment: 85, tokens: 12400 },
+          { type: 'Documents', date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), items: '3 docs', alignment: 91, tokens: 8200 }
+        ];
+  }
 }

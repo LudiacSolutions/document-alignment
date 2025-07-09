@@ -3,7 +3,7 @@
     <h1>API Key Management</h1>
     <p>Manage OpenAI and other service API keys</p>
   </div>
-  <button class="btn btn-primary" (click)="openAddKeyModal()">
+  <button class="btn btn-primary" (click)="openAddKeyModal(addApiKeyModal)">
     + Add API Key
   </button>
 </div>
@@ -121,13 +121,11 @@
 </div>
 
 <!-- Add API Key Modal -->
-@if(showAddModal){
-<div class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Add API Key</h3>
-      <button (click)="closeAddKeyModal()" class="modal-close">&times;</button>
-    </div>
+<ng-template #addApiKeyModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Add API Key</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
     <div class="modal-body">
       <div class="form-group">
         <label>Service</label>
@@ -166,12 +164,8 @@
         />
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeAddKeyModal()">
-        Cancel
-      </button>
-      <button class="btn btn-primary" (click)="addApiKey()">Add Key</button>
-    </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="modal.close('Save click')">Add Key</button>
   </div>
-</div>
-}
+</ng-template>
