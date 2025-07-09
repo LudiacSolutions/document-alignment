@@ -39,4 +39,8 @@ body {
   animation: fadeIn 0.3s ease;
 }
 
-
+html,
+body {
+  overflow-x: hidden;
+  background: #f8fafc;
+}
