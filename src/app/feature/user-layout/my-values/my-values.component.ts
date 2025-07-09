@@ -1,6 +1,8 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, signal, TemplateRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MyValues } from './my-value.interface';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 interface Value {
   id: number;
   name: string;
@@ -9,12 +11,39 @@ interface Value {
 }
 @Component({
   selector: 'app-my-values',
-  imports: [NgFor],
+  imports: [NgFor, FormsModule, ReactiveFormsModule],
   templateUrl: './my-values.component.html',
   styleUrl: './my-values.component.css'
 })
 export class MyValuesComponent {
-  values: Value[] = [
+  values = signal<MyValues[]>([]);
+  selectedValueCard!: MyValues;
+  isEditing = signal<boolean>(false);
+
+  myValueForm!: FormGroup;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private modalService: NgbModal
+  ) {
+    this.myValueForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      databaseServer: ['', Validators.required],
+      databaseUser: ['', Validators.required],
+      databaseName: ['', Validators.required],
+      azureSecretKeyName: ['', Validators.required],
+    });
+  }
+
+
+  onSave(): void {
+    if (this.myValueForm.invalid) {
+      this.myValueForm.markAllAsTouched();
+      return;
+    }
+  }
+
+  value: Value[] = [
     {
       id: 1,
       name: "Innovation & Excellence",
@@ -54,7 +83,10 @@ export class MyValuesComponent {
     }
   };
 
-  constructor(private modalService: NgbModal) { }
+
+  onAdd(content: TemplateRef<any>): void {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'md' })
+  }
 
   showAddValueModal() {
     if (this.values.length >= 10) {
@@ -65,7 +97,7 @@ export class MyValuesComponent {
   }
 
   editValue(id: number) {
-    const value = this.values.find(v => v.id === id);
+    const value = this.value.find(v => v.id === id);
     if (value) {
       // this.modalService.openValueModal(value);
     }
@@ -73,7 +105,7 @@ export class MyValuesComponent {
 
   deleteValue(id: number) {
     if (confirm('Are you sure you want to delete this value?')) {
-      this.values = this.values.filter(v => v.id !== id);
+      this.value = this.value.filter(v => v.id !== id);
       // this.modalService.showToast('Value deleted', 'success');
     }
   }
@@ -86,9 +118,9 @@ export class MyValuesComponent {
   handleValueSaved(value: Value) {
     if (value.id) {
       // Update existing value
-      const index = this.values.findIndex(v => v.id === value.id);
+      const index = this.value.findIndex(v => v.id === value.id);
       if (index !== -1) {
-        this.values[index] = value;
+        this.value[index] = value;
         // this.modalService.showToast('Value updated successfully', 'success');
       }
     } else {
@@ -97,7 +129,7 @@ export class MyValuesComponent {
         ...value,
         id: Date.now()
       };
-      this.values.push(newValue);
+      this.value.push(newValue);
       // this.modalService.showToast('Value added successfully', 'success');
     }
   }
