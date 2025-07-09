@@ -1,1 +1,44 @@
-<p>settings works!</p>
+<div class="settings-page">
+    <div class="section-header">
+        <h1>Settings</h1>
+        <p>Configure your account and preferences</p>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">AI Model Selection</h3>
+        <div class="form-group">
+            <label>Select Language Model</label>
+            <select [(ngModel)]="selectedModel" (change)="updateSelectedModel()">
+                <option value="gpt4o">GPT-4o (Balanced)</option>
+                <option value="gpt41">GPT-4.1 (Enhanced)</option>
+                <option value="gpt35">GPT-3.5 Turbo (Fast)</option>
+            </select>
+        </div>
+        <div class="token-limits">
+            <p><strong>Monthly Token Limits:</strong></p>
+            <div class="token-limit-info">
+                <p>Input: {{tokenLimits.input | number}} tokens (~{{estimatedPages.input | number}} pages)</p>
+                <p>Output: {{tokenLimits.output | number}} tokens (~{{estimatedPages.output | number}} pages)</p>
+            </div>
+        </div>
+        <div class="model-note">
+            <p><strong>Note:</strong> GPT-4 Turbo (GPT-4.5) is only available with PRO plan</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Account Management</h3>
+        <div  style="display: flex;">
+            <button class="btn btn-secondary" style="margin-right: 1rem;">Change Password</button>
+            <button class="btn btn-secondary">Update 2FA Settings</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Data & Privacy</h3>
+        <button class="btn btn-danger w-25" (click)="confirmDeleteAccount()">Delete All Data</button>
+        <p class="delete-warning">
+            This will permanently delete all your values, analyses, and account data.
+        </p>
+    </div>
+</div>

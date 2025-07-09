@@ -6,7 +6,7 @@ import { UserSidebarComponent } from '../../shared/components/user-sidebar/user-
 
 @Component({
   selector: 'app-user-layout',
-  imports: [RouterOutlet, HeaderComponent, UserSidebarComponent],
+  imports: [RouterOutlet, UserSidebarComponent],
   templateUrl: './user-layout.component.html',
   styleUrl: './user-layout.component.css',
 })

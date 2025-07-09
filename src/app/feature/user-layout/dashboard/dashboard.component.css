@@ -1,0 +1,183 @@
+.dashboard {
+    padding: 2rem;
+}
+
+.dashboard .section-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard .section-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard .section-header p {
+    color: var(--text-light);
+}
+
+.dashboard .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard .stats-grid .card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.dashboard .stats-grid .card .card-header .emoji-icon {
+    font-size: 2rem;
+}
+
+.dashboard .stats-grid .card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.dashboard .stats-grid .card .stat-description {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.dashboard .activity-list {
+    margin-top: 1rem;
+}
+
+.dashboard .activity-list .activity-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard .activity-list .activity-item .activity-content .activity-document {
+    font-weight: 500;
+}
+
+.dashboard .activity-list .activity-item .activity-content .activity-document .purged-badge {
+    color: var(--danger);
+    font-size: 0.875rem;
+}
+
+.dashboard .activity-list .activity-item .activity-content .activity-meta {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.dashboard .no-activity {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.token-meter {
+    background: var(--background);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.token-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.token-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.token-fill {
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.token-fill.warning {
+    background: var(--warning);
+}
+
+.token-fill.danger {
+    background: var(--danger);
+}
+
+.token-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.card {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--border);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+select:focus-visible{
+    outline: none;
+}

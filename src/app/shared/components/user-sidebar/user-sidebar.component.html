@@ -1,29 +1,29 @@
 <nav class="sidebar">
-  <a
-    class="nav-item active"
-    onclick="showPage('dashboard')"
-    data-page="dashboard"
-  >
+  <a class="nav-item" routerLink="/user/dashboard" routerLinkActive="active">
     <span class="nav-icon">📊</span>
     <span>Dashboard</span>
   </a>
-  <a class="nav-item" onclick="showPage('core-docs')" data-page="core-docs">
+  <a class="nav-item" routerLink="/user/core-documents" routerLinkActive="active">
     <span class="nav-icon">📁</span>
     <span>Core Documents</span>
   </a>
-  <a class="nav-item" onclick="showPage('references')" data-page="references">
+  <a class="nav-item" routerLink="/user/references" routerLinkActive="active">
     <span class="nav-icon">🔗</span>
     <span>References</span>
   </a>
-  <a class="nav-item" onclick="showPage('analysis')" data-page="analysis">
+  <a class="nav-item" routerLink="/user/my-values" routerLinkActive="active">
+    <span class="nav-icon">🎯</span>
+    <span>My Values</span>
+  </a>
+  <a class="nav-item" routerLink="/user/new-analysis" routerLinkActive="active">
     <span class="nav-icon">📝</span>
     <span>New Analysis</span>
   </a>
-  <a class="nav-item" onclick="showPage('history')" data-page="history">
+  <a class="nav-item" routerLink="/user/history" routerLinkActive="active">
     <span class="nav-icon">📚</span>
     <span>History</span>
   </a>
-  <a class="nav-item" onclick="showPage('settings')" data-page="settings">
+  <a class="nav-item" routerLink="/user/settings" routerLinkActive="active">
     <span class="nav-icon">⚙️</span>
     <span>Settings</span>
   </a>

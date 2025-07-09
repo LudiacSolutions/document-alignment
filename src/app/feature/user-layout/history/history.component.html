@@ -1,1 +1,60 @@
-<p>history works!</p>
+<div class="history-page">
+    <div class="section-header">
+        <h1>Analysis History</h1>
+        <p>View and manage your previous document analyses</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Recent Analyses</h3>
+            <div class="search-box">
+                <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (input)="filterAnalyses()">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Document</th>
+                    <th>Date</th>
+                    <th>Values Checked</th>
+                    <th>Alignment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let analysis of filteredAnalyses">
+                    <td>
+                        {{analysis.documentName}}
+                        <span *ngIf="analysis.purged" class="purged-badge">[PURGED]</span>
+                    </td>
+                    <td>{{analysis.date | date:'mediumDate'}}</td>
+                    <td>{{analysis.valuesChecked}} values</td>
+                    <td>
+                        <span class="alignment-badge" [ngClass]="getAlignmentClass(analysis.finalAlignment)">
+                            {{analysis.finalAlignment}}%
+                        </span>
+                    </td>
+                    <td class="actions">
+                        <button class="btn btn-secondary btn-sm" (click)="viewAnalysis(analysis)">
+                            View
+                        </button>
+                        <button class="btn btn-secondary btn-sm" (click)="downloadAnalysis(analysis)">
+                            Download
+                        </button>
+                        <button class="btn btn-danger btn-sm" (click)="purgeDocument(analysis)"
+                            [disabled]="analysis.purged">
+                            Purge
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="filteredAnalyses.length === 0">
+                    <td colspan="5" class="no-results">
+                        No analyses found. Complete your first document analysis to see it here.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

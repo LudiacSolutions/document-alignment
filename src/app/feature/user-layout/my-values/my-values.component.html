@@ -1,0 +1,67 @@
+<div class="value-management">
+    <div class="section-header">
+        <h1>My Values</h1>
+        <p>Your FREE plan lets you define up to 10 organizational values and descriptors for document alignment.</p>
+    </div>
+
+    <button class="btn btn-primary" (click)="showAddValueModal()" style="margin-bottom: 2rem;">
+        + Add New Value
+    </button>
+
+    <div class="values-grid" id="valuesGrid">
+        <div class="value-card" *ngFor="let value of values">
+            <div class="value-header">
+                <div class="value-title">{{value.name}}</div>
+                <div class="value-actions">
+                    <button class="icon-btn" (click)="editValue(value.id)">✏️</button>
+                    <button class="icon-btn" (click)="deleteValue(value.id)">🗑️</button>
+                </div>
+            </div>
+            <p style="color: var(--text-light); margin-bottom: 1rem;">{{value.description}}</p>
+            <div class="tolerance-container">
+                <div class="tolerance-header">
+                    <span class="tolerance-label">Compliance Tolerance</span>
+                    <span class="tolerance-value">{{value.tolerance}}/10</span>
+                </div>
+                <input type="range" class="slider" min="1" max="10" [value]="value.tolerance" disabled>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem; padding: 1rem; text-align: center;">
+        <p style="color: var(--text-light);">You have used {{values.length}} of 10 available value slots</p>
+    </div>
+
+    <!-- Locked PRO Features -->
+    <div style="margin-top: 3rem;">
+        <div class="card" style="position: relative; opacity: 0.7; margin-bottom: 1rem;">
+            <div
+                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; border-radius: 12px; z-index: 10;">
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem;">🔒</span>
+                    <p style="font-weight: 600; margin-top: 0.5rem;">Upload Core Documents</p>
+                    <button class="btn btn-primary" (click)="showUpgradeModal()" style="margin-top: 1rem;">Upgrade to
+                        PRO</button>
+                </div>
+            </div>
+            <h3 class="card-title">Upload Core Documents (PRO Feature)</h3>
+            <p style="color: var(--text-light);">Upload PDFs, Word docs, or enter text for your mission statements,
+                brand guidelines, and other core documents</p>
+        </div>
+
+        <div class="card" style="position: relative; opacity: 0.7;">
+            <div
+                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; border-radius: 12px; z-index: 10;">
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem;">🔒</span>
+                    <p style="font-weight: 600; margin-top: 0.5rem;">Copy and Paste Core Reference URL</p>
+                    <button class="btn btn-primary" (click)="showUpgradeModal()" style="margin-top: 1rem;">Upgrade to
+                        PRO</button>
+                </div>
+            </div>
+            <h3 class="card-title">Copy and Paste Core Reference URL (PRO Feature)</h3>
+            <p style="color: var(--text-light);">Add external compliance documents, industry standards, and regulatory
+                requirements</p>
+        </div>
+    </div>
+</div>

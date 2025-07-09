@@ -15,12 +15,12 @@ import { HistoryComponent } from './feature/user-layout/history/history.componen
 import { AdminSettingsComponent } from './feature/admin-layout/system/admin-settings/admin-settings.component';
 import { AdminLayoutComponent } from './feature/admin-layout/admin-layout.component';
 import { UserLayoutComponent } from './feature/user-layout/user-layout.component';
+import { MyValuesComponent } from './feature/user-layout/my-values/my-values.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
-    canActivate: [],
     children: [
       { path: 'overview', component: OverviewComponent},
       { path: 'users', component: UserComponent},
@@ -28,7 +28,7 @@ export const routes: Routes = [
       { path: 'usage', component: UsageStatsComponent},
       { path: 'performance', component: PerformanceComponent},
       { path: 'api-keys', component: ApiKeysComponent},
-      { path: 'settings', component: AdminSettingsComponent},
+      { path: 'admin-settings', component: AdminSettingsComponent},
       { path: 'logs', component: LogsComponent},
       { path: '', redirectTo: 'overview', pathMatch: 'full' }
     ]
@@ -36,10 +36,10 @@ export const routes: Routes = [
   {
     path: 'user',
     component: UserLayoutComponent,
-    canActivate: [],
     children: [
       { path: 'dashboard', component: DashboardComponent},
       { path: 'core-documents', component: CoreDocumentsComponent},
+      { path: 'my-values', component: MyValuesComponent},
       { path: 'references', component: ReferencesComponent},
       { path: 'new-analysis', component: NewAnalysisComponent},
       { path: 'history', component: HistoryComponent},

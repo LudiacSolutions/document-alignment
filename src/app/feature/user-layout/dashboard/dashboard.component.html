@@ -1,2 +1,66 @@
-<h1>Dashboard</h1>
-<p>Monitor your document alignment activities</p>
+<!-- Dashboard Page -->
+<!-- <section id="dashboard" class="page-section active"> -->
+    <div class="section-header">
+        <h1>Dashboard</h1>
+        <p>Monitor your document alignment activities</p>
+    </div>
+
+    <!-- Token Usage Overview -->
+    <div class="token-meter">
+        <div class="token-header">
+            <span>Monthly Token Usage</span>
+            <select id="modelSelect" onchange="updateTokenDisplay()">
+                <option value="gpt4o">GPT-4o</option>
+                <option value="gpt41">GPT-4.1</option>
+                <option value="gpt35">GPT-3.5 Turbo</option>
+            </select>
+        </div>
+        <div class="token-bar">
+            <div class="token-fill" id="tokenFill" style="width: 0%"></div>
+        </div>
+        <div class="token-details">
+            <span id="tokensUsed">0 / 1,000,000 tokens used</span>
+            <span id="pagesRemaining">~1,333 pages remaining</span>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Values Created</span>
+                <span style="font-size: 2rem;">🎯</span>
+            </div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="valuesCount">3 / 10</div>
+            <div style="color: var(--text-light); font-size: 0.875rem;" id="valuesSlotsRemaining">7 slots remaining
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Documents Analyzed</span>
+                <span style="font-size: 2rem;">📄</span>
+            </div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="docsAnalyzedCount">0</div>
+            <div style="color: var(--text-light); font-size: 0.875rem;">This month</div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Avg. Alignment</span>
+                <span style="font-size: 2rem;">✨</span>
+            </div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--warning);" id="avgAlignmentValue">-</div>
+            <div style="color: var(--text-light); font-size: 0.875rem;" id="avgAlignmentText">No analyses yet</div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card">
+        <h3 class="card-title">Recent Activity</h3>
+        <div style="margin-top: 1rem;" id="recentActivityList">
+            <div style="padding: 1rem; text-align: center; color: var(--text-light);">
+                No analyses yet. Start by analyzing a document.
+            </div>
+        </div>
+    </div>
+<!-- </section> -->

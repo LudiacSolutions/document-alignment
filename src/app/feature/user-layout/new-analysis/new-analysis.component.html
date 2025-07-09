@@ -1,1 +1,85 @@
-<p>new-analysis works!</p>
+<div class="new-analysis">
+    <div class="section-header">
+        <h1>Document Analysis</h1>
+        <p>Align your documents with your organizational values</p>
+    </div>
+
+    <!-- Reanalysis Banner -->
+    <div class="reanalysis-banner" *ngIf="analysisChangePending">
+        <p>You have made changes to your selection. Click to update the analysis.</p>
+        <button class="btn btn-primary" (click)="rerunAnalysis()">Re-analyze Document</button>
+    </div>
+
+    <!-- Step 1: Select Values -->
+    <div class="card">
+        <h3 class="card-title">Step 1: Select Values to Check Against</h3>
+        <div class="values-selection">
+            <label *ngFor="let value of values" class="value-checkbox">
+                <input type="checkbox"  (change)="updateSelectedValues()">
+                <span>{{value.name}} (Tolerance: {{value.tolerance}}/10)</span>
+            </label>
+            <p *ngIf="values.length === 0" class="no-values">No values created yet. Please add values first.</p>
+        </div>
+        <p class="selection-count">
+            Selected: <strong>{{selectedCount}}</strong> values
+        </p>
+    </div>
+
+    <!-- Step 2: Core Documents (Locked for FREE) -->
+    <div class="card locked-feature">
+        <div class="locked-overlay">
+            <div class="locked-content">
+                <span class="locked-icon">🔒</span>
+                <p class="locked-title">Core Documents Available in PRO</p>
+                <button class="btn btn-primary" (click)="showUpgradeModal()">Upgrade to PRO</button>
+            </div>
+        </div>
+        <h3 class="card-title">Step 2: Core Documents (PRO Feature)</h3>
+        <p class="locked-description">Upload and reference up to 10 core documents</p>
+    </div>
+
+    <!-- Step 3: Reference URLs (Locked for FREE) -->
+    <div class="card locked-feature">
+        <div class="locked-overlay">
+            <div class="locked-content">
+                <span class="locked-icon">🔒</span>
+                <p class="locked-title">URL References Available in PRO</p>
+                <button class="btn btn-primary" (click)="showUpgradeModal()">Upgrade to PRO</button>
+            </div>
+        </div>
+        <h3 class="card-title">Step 3: Reference URLs (PRO Feature)</h3>
+        <p class="locked-description">Add up to 5 external reference URLs</p>
+    </div>
+
+    <!-- Step 4: Upload Document -->
+    <div class="card">
+        <h3 class="card-title">Step 4: Upload Your Document or Enter Text</h3>
+        <div class="upload-area" (click)="fileInput.click()" [class.active]="isDragging">
+            <input #fileInput type="file" (change)="handleFileUpload($event)"
+                accept=".doc,.docx,.pdf,.txt,.rtf,.xls,.xlsx" hidden>
+            <div class="upload-icon">📄</div>
+            <h4>{{uploadedFile ? uploadedFile.name : 'Click to upload or drag & drop'}}</h4>
+            <p class="upload-hint">Supported: DOC, DOCX, PDF, TXT, RTF, XLS, XLSX</p>
+        </div>
+
+        <div class="divider">
+            <span>— OR — You can add Text or a File, not both —</span>
+        </div>
+
+        <div class="form-group">
+            <label>Enter Text Directly</label>
+            <textarea  (ngModelChange)="handleTextInput()"
+                placeholder="Paste or type your document content here..."></textarea>
+        </div>
+    </div>
+
+    <!-- Analyze Button -->
+    <div class="analyze-section">
+        <button class="btn btn-primary analyze-btn" (click)="startAnalysis()" [disabled]="!isReadyForAnalysis">
+            🎯 Work Your Magic
+        </button>
+        <p class="analyze-hint">
+            Select at least one value and upload a document to begin
+        </p>
+    </div>
+</div>

@@ -74,3 +74,7 @@
     display: none;
   }
 }
+
+.colorful-icon {
+  color: #f39c12; /* golden-yellow, looks colorful */
+}
