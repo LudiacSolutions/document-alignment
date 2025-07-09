@@ -2,17 +2,18 @@
   <h1>Reference URLs</h1>
   <p>Manage external references for compliance checking</p>
 </div>
- 
+
 <button
   class="btn btn-primary"
-  (click)="showAddReferenceModal()"
+  (click)="openAddEditModal(addReferenceModal)"
   style="margin-bottom: 2rem"
 >
   + Add Reference URL
 </button>
- 
+
 <div id="referencesGrid">
-  <div class="url-reference-item" *ngFor="let ref of references">
+  @for(ref of references; track ref.id){
+  <div class="url-reference-item">
     <div class="url-info">
       <div class="url-title">{{ ref.title }}</div>
       <a href="{{ ref.url }}" class="url-link" target="_blank">{{ ref.url }}</a>
@@ -20,7 +21,7 @@
     <div>
       <button
         class="btn btn-secondary"
-        style="padding: 0.5rem; font-size: 0.875rem"
+        style="padding: 0.5rem; font-size: 0.875rem; margin-right: 5px"
         (click)="editReference(ref.id)"
       >
         Edit
@@ -34,8 +35,9 @@
       </button>
     </div>
   </div>
+  }
 </div>
- 
+
 <div
   style="
     margin-top: 2rem;
@@ -50,55 +52,46 @@
     available reference URL slots
   </p>
 </div>
- 
+
 <!-- Add Reference URL Modal -->
-<div class="modal" *ngIf="showModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Add Reference URL</h3>
-      <button
-        (click)="closeModal()"
-        style="
-          background: none;
-          border: none;
-          font-size: 1.5rem;
-          cursor: pointer;
-        "
-      >
-        ×
-      </button>
+<ng-template #addReferenceModal let-d="dismiss" let-c="close">
+  <div class="modal-header">
+    <h3>Add Reference URL</h3>
+    <button
+      style="background: none; border: none; font-size: 1.5rem; cursor: pointer"
+      (click)="c()"
+    >
+      ×
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Reference Title</label>
+      <input
+        type="text"
+        [(ngModel)]="newReference.title"
+        placeholder="e.g., GDPR Compliance Requirements"
+      />
     </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Reference Title</label>
-        <input
-          type="text"
-          [(ngModel)]="newReference.title"
-          placeholder="e.g., GDPR Compliance Requirements"
-        />
-      </div>
- 
-      <div class="form-group">
-        <label>URL</label>
-        <input
-          type="url"
-          [(ngModel)]="newReference.url"
-          placeholder="https://example.com/compliance-guide"
-        />
-      </div>
- 
-      <div style="padding: 1rem; background: #fef3c7; border-radius: 6px">
-        <p style="color: #92400e; font-size: 0.875rem">
-          <strong>Note:</strong> Fetching URL content will consume tokens based
-          on the page size.
-        </p>
-      </div>
+
+    <div class="form-group">
+      <label>URL</label>
+      <input
+        type="url"
+        [(ngModel)]="newReference.url"
+        placeholder="https://example.com/compliance-guide"
+      />
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-      <button class="btn btn-primary" (click)="saveReference()">
-        Save Reference
-      </button>
+
+    <div style="padding: 1rem; background: #fef3c7; border-radius: 6px">
+      <p style="color: #92400e; font-size: 0.875rem">
+        <strong>Note:</strong> Fetching URL content will consume tokens based on
+        the page size.
+      </p>
     </div>
   </div>
-</div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="d()">Cancel</button>
+    <button class="btn btn-primary" (click)="c(); saveReference()">Save Reference</button>
+  </div>
+</ng-template>

@@ -1,21 +1,14 @@
-import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-interface CoreDocument {
-  id: number;
-  title: string;
-  type: 'file' | 'text';
-  description: string;
-  uploadDate: string;
-  content?: string;
-  file?: File;
-}
+import { CoreDocument } from './core-document.interface';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-core-documents',
-  imports: [NgClass, NgIf, NgFor],
+  imports: [CommonModule, FormsModule],
   templateUrl: './core-documents.component.html',
-  styleUrl: './core-documents.component.css'
+  styleUrls: ['./core-documents.component.css'],
 })
 export class CoreDocumentsComponent {
   coreDocuments: CoreDocument[] = [
@@ -53,12 +46,21 @@ export class CoreDocumentsComponent {
     },
   ];
 
-  showModal = false;
   isEditing = false;
   currentDoc: CoreDocument = this.createEmptyDoc();
   selectedInputMethod: 'text' | 'file' | null = null;
   selectedFileName = '';
+  constructor(private modalService: NgbModal) {}
+  ngOnInit(): void {}
 
+  openAddEditModal(content: any) {
+    this.modalService.open(content, {
+      backdrop: 'static',
+      size: 'lg',
+      keyboard: true,
+      centered: true,
+    });
+  }
   createEmptyDoc(): CoreDocument {
     return {
       id: 0,
@@ -82,7 +84,6 @@ export class CoreDocumentsComponent {
     this.isEditing = false;
     this.selectedInputMethod = null;
     this.selectedFileName = '';
-    this.showModal = true;
   }
 
   openEditModal(doc: CoreDocument): void {
@@ -90,11 +91,6 @@ export class CoreDocumentsComponent {
     this.isEditing = true;
     this.selectedInputMethod = doc.type;
     this.selectedFileName = doc.type === 'file' ? doc.title : '';
-    this.showModal = true;
-  }
-
-  closeModal(): void {
-    this.showModal = false;
   }
 
   selectInputMethod(method: 'text' | 'file'): void {
@@ -117,7 +113,7 @@ export class CoreDocumentsComponent {
 
   saveDocument(): void {
     const title = this.currentDoc.title.trim();
-
+    this.modalService.dismissAll();
     if (!title) {
       this.showToast('Please enter a document title', 'error');
       return;
@@ -175,8 +171,6 @@ export class CoreDocumentsComponent {
       this.coreDocuments.push(newDoc);
       this.showToast(`Core document "${title}" saved successfully`, 'success');
     }
-
-    this.closeModal();
   }
 
   deleteDoc(id: number): void {
@@ -185,7 +179,9 @@ export class CoreDocumentsComponent {
       this.showToast('Core document deleted', 'success');
     }
   }
-
+  checkModalWorkingOrNot() {
+    console.log(' I m working another ptoblem');
+  }
   editDoc(doc: CoreDocument): void {
     this.openEditModal(doc);
   }
@@ -198,6 +194,7 @@ export class CoreDocumentsComponent {
       file: 'doc',
       text: 'txt',
     };
+    console.log(iconMap[type]);
     return iconMap[type] || 'doc';
   }
 
@@ -209,6 +206,7 @@ export class CoreDocumentsComponent {
       file: '📄',
       text: '📝',
     };
+    console.log(iconMap[type]);
     return iconMap[type] || '📄';
   }
 

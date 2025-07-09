@@ -1,11 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-interface Reference {
-  id: number;
-  title: string;
-  url: string;
-}
+import { Reference } from './references.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-references',
   imports: [CommonModule, FormsModule],
@@ -27,12 +24,17 @@ export class ReferencesComponent {
   ];
 
   showModal = false;
-  newReference: Reference = {
-    id: 0,
-    title: '',
-    url: '',
-  };
+  newReference: Reference = { id: 0, title: '', url: '' };
 
+  constructor(private modalService: NgbModal) {}
+  openAddEditModal(content: any) {
+    this.modalService.open(content, {
+      backdrop: 'static',
+      keyboard: true,
+      size: 'xl',
+      centered: true,
+    });
+  }
   showAddReferenceModal() {
     if (this.references.length >= 5) {
       this.showToast(
@@ -50,6 +52,8 @@ export class ReferencesComponent {
   }
 
   saveReference() {
+    console.log('Saving reference:', this.newReference);
+    
     const { title, url } = this.newReference;
 
     if (!title || !url) {
@@ -72,6 +76,8 @@ export class ReferencesComponent {
     };
 
     this.references.push(newRef);
+    console.log("this.references", this.references);
+
     this.showModal = false;
     this.showToast(`Reference URL "${title}" saved successfully`, 'success');
   }

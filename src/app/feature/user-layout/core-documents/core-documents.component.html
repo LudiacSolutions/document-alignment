@@ -1,116 +1,162 @@
 <div class="section-header">
-    <h1>Core Documents</h1>
-    <p>Manage your reference documents for alignment checking</p>
+  <h1>Core Documents</h1>
+  <p>Manage your reference documents for alignment checking</p>
 </div>
 
-<button class="btn btn-primary" (click)="openAddDocModal()" style="margin-bottom: 2rem">
-    + Add Core Document
+<button
+  class="btn btn-primary"
+  style="margin-bottom: 2rem"
+  (click)="openAddEditModal(addEditModal); openAddDocModal()"
+>
+  + Add Core Document
 </button>
 
 <div class="docs-grid">
-    <div class="doc-card" *ngFor="let doc of coreDocuments">
-        <span class="doc-type-badge" [ngClass]="doc.type === 'text' ? 'text' : 'file'">{{ doc.type.toUpperCase()
-            }}</span>
-        <div class="file-type-icon" [ngClass]="getFileTypeClass(doc.type)">
-            {{ getFileTypeIcon(doc.type) }}
-        </div>
-        <h4>{{ doc.title }}</h4>
-        <p style="color: var(--text-light); font-size: 0.875rem; margin: 0.5rem 0">
-            {{ doc.description }}
-        </p>
-        <div style="
+  @for(doc of coreDocuments; track doc.id) {
+  <div class="doc-card">
+    <span
+      class="doc-type-badge"
+      [ngClass]="doc.type === 'text' ? 'text' : 'file'"
+      >{{ doc.type.toUpperCase() }}</span
+    >
+    <div class="file-type-icon" [ngClass]="getFileTypeClass(doc.type)">
+      {{ getFileTypeIcon(doc.type) }}
+    </div>
+    <h4>{{ doc.title }}</h4>
+    <p style="color: var(--text-light); font-size: 0.875rem; margin: 0.5rem 0">
+      {{ doc.description }}
+    </p>
+    <div
+      style="
         margin-top: 1rem;
         padding-top: 1rem;
         border-top: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-      ">
-            <span style="font-size: 0.75rem; color: var(--text-light)">{{ doc.type === "text" ? "Added" : "Uploaded" }}:
-                {{ doc.uploadDate }}</span>
-            <div>
-                <button class="btn btn-secondary" style="padding: 0.5rem; font-size: 0.875rem" (click)="editDoc(doc)">
-                    Edit
-                </button>
-                <button class="btn btn-danger" style="padding: 0.5rem; font-size: 0.875rem" (click)="deleteDoc(doc.id)">
-                    Delete
-                </button>
-            </div>
-        </div>
+      "
+    >
+      <span style="font-size: 0.75rem; color: var(--text-light)"
+        >{{ doc.type === "text" ? "Added" : "Uploaded" }}:
+        {{ doc.uploadDate }}
+      </span>
+      <div>
+        <button
+          class="btn btn-secondary"
+          style="padding: 0.5rem; font-size: 0.875rem; margin-right: 5px"
+          (click)="editDoc(doc)"
+        >
+          Edit
+        </button>
+        <button
+          class="btn btn-danger"
+          style="padding: 0.5rem; font-size: 0.875rem"
+          (click)="deleteDoc(doc.id)"
+        >
+          Delete
+        </button>
+      </div>
     </div>
+  </div>
+  }
 </div>
 
-<div style="
+<div
+  style="
     margin-top: 2rem;
     padding: 1rem;
     background: var(--background);
     border-radius: 8px;
     text-align: center;
-  ">
-    <p style="color: var(--text-light)">
-        You have used {{ coreDocuments.length }} of 10 available core document slots
-    </p>
+  "
+>
+  <p style="color: var(--text-light)">
+    You have used {{ coreDocuments.length }} of 10 available core document slots
+  </p>
 </div>
 
-<!-- Modal for Add/Edit -->
-<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h3>{{ isEditing ? "Edit Core Document" : "Add Core Document" }}</h3>
-            <button class="modal-close" (click)="closeModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Document Title</label>
-                <input type="text" placeholder="e.g., Company Strategy 2025" />
-            </div>
-
-            <div class="form-group">
-                <label>Choose Input Method - Text OR a File. Not both</label>
-                <div style="display: flex; gap: 1rem; margin-bottom: 1rem">
-                    <button class="btn" [ngClass]="
-              selectedInputMethod === 'text' ? 'btn-primary' : 'btn-secondary'
-            " (click)="selectInputMethod('text')">
-                        Enter Text
-                    </button>
-                    <button class="btn" [ngClass]="
-              selectedInputMethod === 'file' ? 'btn-primary' : 'btn-secondary'
-            " (click)="selectInputMethod('file')">
-                        Upload File
-                    </button>
-                </div>
-            </div>
-
-            <div *ngIf="selectedInputMethod === 'text'">
-                <div class="form-group">
-                    <label>Document Content</label>
-                    <textarea placeholder="Enter your core document content..." style="min-height: 200px"></textarea>
-                </div>
-            </div>
-
-            <div *ngIf="selectedInputMethod === 'file'">
-                <div class="form-group">
-                    <label>Upload File</label>
-                    <label class="file-upload-btn btn btn-primary">
-                        Choose File
-                        <input type="file" id="docFile" (change)="handleDocFileUpload($event)"
-                            accept=".doc,.docx,.pdf,.txt,.rtf,.xls,.xlsx" style="display: none" />
-                    </label>
-                    <span style="margin-left: 1rem">{{ selectedFileName || "" }}</span>
-                    <p style="
-              margin-top: 0.5rem;
-              color: var(--text-light);
-              font-size: 0.875rem;
-            ">
-                        Supported: DOC, DOCX, PDF, TXT, RTF, XLS, XLSX
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-            <button class="btn btn-primary" (click)="saveDocument()">
-                {{ isEditing ? "Update" : "Save" }} Document
-            </button>
-        </div>
+<!-- NgBootstrap Modal Template -->
+<ng-template #addEditModal let-d="dismiss" let-c="close">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{ isEditing ? "Edit Core Document" : "Add Core Document" }}
+    </h3>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Document Title</label>
+      <input
+        type="text"
+        [(ngModel)]="currentDoc.title"
+        class="form-control"
+        placeholder="e.g., Company Strategy 2025"
+      />
     </div>
-</div>
+
+    <div class="form-group mt-3">
+      <label>Choose Input Method - Text OR a File. Not both</label>
+      <div class="d-flex gap-2 mb-3">
+        <button
+          class="btn"
+          [ngClass]="
+            selectedInputMethod === 'text' ? 'btn-primary' : 'btn-secondary'
+          "
+          (click)="selectInputMethod('text')"
+        >
+          Enter Text
+        </button>
+        <button
+          class="btn"
+          [ngClass]="
+            selectedInputMethod === 'file' ? 'btn-primary' : 'btn-secondary'
+          "
+          (click)="selectInputMethod('file')"
+        >
+          Upload File
+        </button>
+      </div>
+    </div>
+    @if(selectedInputMethod === 'text'){
+    <div class="form-group">
+      <label>Document Content</label>
+      <textarea
+        [(ngModel)]="currentDoc.content"
+        class="form-control"
+        placeholder="Enter your core document content..."
+        style="min-height: 200px"
+      ></textarea>
+    </div>
+    } @if(selectedInputMethod === 'file'){
+    <div class="form-group">
+      <label>Upload File</label>
+      <label class="file-upload-btn btn btn-primary">
+        Choose File
+        <input
+          type="file"
+          id="docFile"
+          (change)="handleDocFileUpload($event)"
+          accept=".doc,.docx,.pdf,.txt,.rtf,.xls,.xlsx"
+          style="display: none"
+        />
+      </label>
+      <span class="ms-2">{{ selectedFileName || "" }}</span>
+      <p class="text-muted mt-2" style="font-size: 0.875rem">
+        Supported: DOC, DOCX, PDF, TXT, RTF, XLS, XLSX
+      </p>
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c()">
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" (click)="saveDocument()">
+      {{ isEditing ? "Update" : "Save" }} Document
+    </button>
+  </div>
+</ng-template>
