@@ -15,7 +15,7 @@
         <h3 class="card-title">Step 1: Select Values to Check Against</h3>
         <div class="values-selection">
             <label *ngFor="let value of values" class="value-checkbox">
-                <input type="checkbox"  (change)="updateSelectedValues()">
+                <input type="checkbox" (change)="updateSelectedValues()">
                 <span>{{value.name}} (Tolerance: {{value.tolerance}}/10)</span>
             </label>
             <p *ngIf="values.length === 0" class="no-values">No values created yet. Please add values first.</p>
@@ -38,6 +38,7 @@
         <p class="locked-description">Upload and reference up to 10 core documents</p>
     </div>
 
+
     <!-- Step 3: Reference URLs (Locked for FREE) -->
     <div class="card locked-feature">
         <div class="locked-overlay">
@@ -49,6 +50,50 @@
         </div>
         <h3 class="card-title">Step 3: Reference URLs (PRO Feature)</h3>
         <p class="locked-description">Add up to 5 external reference URLs</p>
+    </div>
+
+    <!-- Reanalysis Banner (hidden by default) -->
+    <div class="reanalysis-banner" id="reanalysisBanner" style="display: none;">
+        <p>You have made changes to your selection. Click to update the analysis.</p>
+        <button class="btn btn-primary" onclick="rerunAnalysis()">Re-analyze Document</button>
+    </div>
+
+    <!-- Step 1: Select Core Documents -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Step 1: Select Core Documents</h3>
+            <span class="pro-feature">PRO</span>
+        </div>
+        <div style="margin-top: 1rem;" id="coreDocsSelection">
+            <!-- Will be populated dynamically -->
+        </div>
+        <p style="margin-top: 1rem; color: var(--text-light); font-size: 0.875rem;">
+            Selected: <strong id="selectedCoreCount">0</strong> core documents
+        </p>
+    </div>
+
+    <!-- Step 2: Select Reference URLs -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Step 2: Select Reference URLs (Optional)</h3>
+            <span class="pro-feature">PRO</span>
+        </div>
+        <div style="margin-top: 1rem;" id="refsSelection">
+            <!-- Will be populated dynamically -->
+        </div>
+        <p style="margin-top: 1rem; color: var(--text-light); font-size: 0.875rem;">
+            Selected: <strong id="selectedRefCount">0</strong> reference URLs (max 2 per analysis)
+        </p>
+    </div>
+
+    <!-- Analyze Button -->
+    <div style="text-align: center; margin-top: 2rem;">
+        <button class="btn btn-primary" id="analyzeBtn" onclick="startAnalysis()" disabled>
+            🎯 Analyse This Document
+        </button>
+        <p style="margin-top: 0.5rem; color: var(--text-light); font-size: 0.875rem;">
+            Select at least one core document or reference URL to begin
+        </p>
     </div>
 
     <!-- Step 4: Upload Document -->
@@ -68,7 +113,7 @@
 
         <div class="form-group">
             <label>Enter Text Directly</label>
-            <textarea  (ngModelChange)="handleTextInput()"
+            <textarea (ngModelChange)="handleTextInput()"
                 placeholder="Paste or type your document content here..."></textarea>
         </div>
     </div>

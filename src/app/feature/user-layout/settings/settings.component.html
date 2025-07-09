@@ -27,10 +27,29 @@
     </div>
 
     <div class="card">
+        <h3 class="card-title">Token Management</h3>
+        <div class="cost-display">
+            <div>
+                <div class="cost-label">Current Balance</div>
+                <div style="color: var(--text-light); font-size: 0.875rem;">$49 AUD monthly subscription</div>
+            </div>
+            <button class="btn btn-pro" onclick="showTokenTopup()">
+                Purchase More Tokens ($10)
+            </button>
+        </div>
+        <div style="margin-top: 1rem; padding: 1rem; background: var(--background); border-radius: 6px;">
+            <p style="font-size: 0.875rem; color: var(--text-light);">
+                <strong>Top-up Details:</strong> $10 provides 50% of your monthly limit (full amount for GPT-4.5)
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
         <h3 class="card-title">Account Management</h3>
-        <div  style="display: flex;">
-            <button class="btn btn-secondary" style="margin-right: 1rem;">Change Password</button>
+        <div style="display: flex; gap:8px">
+            <button class="btn btn-secondary">Change Password</button>
             <button class="btn btn-secondary">Update 2FA Settings</button>
+            <button class="btn btn-secondary">Manage Subscription</button>
         </div>
     </div>
 
