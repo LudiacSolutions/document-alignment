@@ -60,3 +60,26 @@ body {
   overflow-x: hidden;
   background: #f8fafc;
 }
+
+.btn-cust {
+  display: inline-block;
+  cursor: pointer;
+  height: 40px;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.btn-cust-primary {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  color: white;
+
+}
+
+.btn-cust-primary:hover {
+  border: 1px solid var(--primary);
+  background-color: white;
+  color: var(--primaryColor);
+}

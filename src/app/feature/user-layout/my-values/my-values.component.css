@@ -1,7 +1,3 @@
-.value-management {
-  padding: 2rem;
-}
-
 .section-header {
   margin-bottom: 2rem;
 }
@@ -184,26 +180,11 @@
   color: var(--text-light);
 }
 
-/* CSS Variables */
-:root {
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --secondary: #64748b;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --background: #f8fafc;
-  --surface: #ffffff;
-  --border: #e2e8f0;
-  --text: #1e293b;
-  --text-light: #64748b;
-}
-
 @media (max-width: 768px) {
   .quick-values-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .value-management {
     padding: 1rem;
   }
