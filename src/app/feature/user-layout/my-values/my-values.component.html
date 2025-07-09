@@ -4,12 +4,12 @@
         <p>Your FREE plan lets you define up to 10 organizational values and descriptors for document alignment.</p>
     </div>
 
-    <button class="btn-cust btn-cust-primary" (click)="showAddValueModal()" style="margin-bottom: 2rem;">
+    <button class="btn-cust btn-cust-primary" (click)="onAdd(content)" style="margin-bottom: 2rem;">
         + Add New Value
     </button>
 
     <div class="values-grid" id="valuesGrid">
-        <div class="value-card" *ngFor="let value of values">
+        <div class="value-card" *ngFor="let value of value">
             <div class="value-header">
                 <div class="value-title">{{value.name}}</div>
                 <div class="value-actions">
@@ -29,7 +29,7 @@
     </div>
 
     <div class="card" style="margin-top: 2rem; padding: 1rem; text-align: center;">
-        <p style="color: var(--text-light);">You have used {{values.length}} of 10 available value slots</p>
+        <p style="color: var(--text-light);">You have used {{value.length}} of 10 available value slots</p>
     </div>
 
     <!-- Locked PRO Features -->
@@ -65,3 +65,19 @@
         </div>
     </div>
 </div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{isEditing() ? 'Edit' : 'Add'}} new Value</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="myValueForm">
+    
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-cust btn-cust-close" (click)="modal.close('Close click')">Cancel</button>
+        <button type="button" class="btn-cust btn-cust-primary" (click)="onSave()">Save</button>
+    </div>
+</ng-template>
