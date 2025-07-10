@@ -1,64 +1,50 @@
-<div class="container">
-  <nav class="sidebar">
-    <div class="nav-section">
-      <div class="nav-section-title">Main</div>
-      <a class="nav-item"
-         routerLink="/overview"
-         routerLinkActive="active"
-         [routerLinkActiveOptions]="{ exact: true }">
-        <span class="nav-icon">📊</span>
-        <span>Overview</span>
-      </a>
-      <a class="nav-item"
-         routerLink="/users"
-         routerLinkActive="active">
-        <span class="nav-icon">👥</span>
-        <span>Users</span>
-      </a>
-      <a class="nav-item"
-         routerLink="/billing"
-         routerLinkActive="active">
-        <span class="nav-icon">💳</span>
-        <span>Billing</span>
-      </a>
-    </div>
+<nav class="sidebar">
+  <div class="nav-section">
+    <div class="nav-section-title">Main</div>
+    <a
+      class="nav-item"
+      routerLink="/admin/overview"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <span class="nav-icon">📊</span>
+      <span>Overview</span>
+    </a>
+    <a class="nav-item" routerLink="/admin/users" routerLinkActive="active">
+      <span class="nav-icon">👥</span>
+      <span>Users</span>
+    </a>
+    <a class="nav-item" routerLink="/admin/billing" routerLinkActive="active">
+      <span class="nav-icon">💳</span>
+      <span>Billing</span>
+    </a>
+  </div>
 
-    <div class="nav-section">
-      <div class="nav-section-title">Analytics</div>
-      <a class="nav-item"
-         routerLink="/usage"
-         routerLinkActive="active">
-        <span class="nav-icon">📈</span>
-        <span>Usage Stats</span>
-      </a>
-      <a class="nav-item"
-         routerLink="/performance"
-         routerLinkActive="active">
-        <span class="nav-icon">⚡</span>
-        <span>Performance</span>
-      </a>
-    </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Analytics</div>
+    <a class="nav-item" routerLink="/admin/usage" routerLinkActive="active">
+      <span class="nav-icon">📈</span>
+      <span>Usage Stats</span>
+    </a>
+    <a class="nav-item" routerLink="/admin/performance" routerLinkActive="active">
+      <span class="nav-icon">⚡</span>
+      <span>Performance</span>
+    </a>
+  </div>
 
-    <div class="nav-section">
-      <div class="nav-section-title">System</div>
-      <a class="nav-item"
-         routerLink="/api-keys"
-         routerLinkActive="active">
-        <span class="nav-icon">🔑</span>
-        <span>API Keys</span>
-      </a>
-      <a class="nav-item"
-         routerLink="/admin-settings"
-         routerLinkActive="active">
-        <span class="nav-icon">⚙️</span>
-        <span>Settings</span>
-      </a>
-      <a class="nav-item"
-         routerLink="/logs"
-         routerLinkActive="active">
-        <span class="nav-icon">📜</span>
-        <span>Logs</span>
-      </a>
-    </div>
-  </nav>
-</div>
+  <div class="nav-section">
+    <div class="nav-section-title">System</div>
+    <a class="nav-item" routerLink="/admin/api-keys" routerLinkActive="active">
+      <span class="nav-icon">🔑</span>
+      <span>API Keys</span>
+    </a>
+    <a class="nav-item" routerLink="/admin/admin-settings" routerLinkActive="active">
+      <span class="nav-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
+    <a class="nav-item" routerLink="/admin/logs" routerLinkActive="active">
+      <span class="nav-icon">📜</span>
+      <span>Logs</span>
+    </a>
+  </div>
+</nav>
