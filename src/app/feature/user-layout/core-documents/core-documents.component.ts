@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CoreDocument } from './core-document.interface';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { ToasterService } from '../../../shared/Toaster/toaster.service';
 @Component({
   selector: 'app-core-documents',
   imports: [CommonModule, FormsModule],
@@ -50,9 +50,28 @@ export class CoreDocumentsComponent {
   currentDoc: CoreDocument = this.createEmptyDoc();
   selectedInputMethod: 'text' | 'file' | null = null;
   selectedFileName = '';
-  constructor(private modalService: NgbModal) {}
-  ngOnInit(): void {}
-
+  constructor(private modalService: NgbModal, private toast: ToasterService) {}
+  ngOnInit(): void {
+    // this.loadCoreDocuments();
+  }
+  // loadCoreDocuments() {
+  //   this.coreDocumentsService.getCoreDocuments().subscribe({
+  //     next: (response: any) => {
+  //       let data = response;
+  //       console.log('response', data);
+  //     },
+  //     error: (error: any) => {
+  //       let data = error;
+  //       console.log('data', data);
+  //     },
+  //   });
+  // }
+  calling() {
+    this.toast.showToast('here is the toast message', 'success');
+    this.toast.showToast('here is the toast message', 'warning');
+    this.toast.showToast('here is the toast message', 'error');
+    this.toast.showToast('here is the toast message', 'info');
+  }
   openAddEditModal(content: any) {
     this.modalService.open(content, {
       backdrop: 'static',
@@ -114,6 +133,7 @@ export class CoreDocumentsComponent {
   saveDocument(): void {
     const title = this.currentDoc.title.trim();
     this.modalService.dismissAll();
+    this.toast.showToast('Document saved successfully', 'warning');
     if (!title) {
       this.showToast('Please enter a document title', 'error');
       return;
@@ -194,7 +214,6 @@ export class CoreDocumentsComponent {
       file: 'doc',
       text: 'txt',
     };
-    console.log(iconMap[type]);
     return iconMap[type] || 'doc';
   }
 
@@ -206,7 +225,6 @@ export class CoreDocumentsComponent {
       file: '📄',
       text: '📝',
     };
-    console.log(iconMap[type]);
     return iconMap[type] || '📄';
   }
 

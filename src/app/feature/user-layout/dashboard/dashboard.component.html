@@ -1,112 +1,118 @@
 <!-- Dashboard Page -->
-<section id="dashboard" class="dashboard py-4">
-    <div class="section-header mb-4">
-        <h1 class="h2 mb-1">Dashboard</h1>
-        <p class="text-muted">Monitor your document alignment activities</p>
+<section id="dashboard" class="dashboard container py-4">
+  <div class="section-header mb-4">
+    <h1 class="h2 mb-1">Dashboard</h1>
+    <p class="text-muted">Monitor your document alignment activities</p>
+  </div>
+  <!-- Token Usage Overview -->
+  <div class="token-meter mb-4 p-3 rounded bg-light border">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span>Monthly Token Usage</span>
+      <select id="modelSelect" class="form-select">
+        <option value="gpt4o">GPT-4o</option>
+        <option value="gpt41">GPT-4.1</option>
+        <option value="gpt35">GPT-3.5 Turbo</option>
+      </select>
     </div>
-
-    <!-- Token Usage Overview -->
-    <div class="token-meter mb-4 p-3 rounded bg-light border">
+    <div
+      class="token-bar bg-secondary rounded position-relative overflow-hidden"
+    >
+      <div class="token-fill bg-primary" id="tokenFill" style="width: 0%"></div>
+    </div>
+    <div class="d-flex justify-content-between text-muted small mt-2">
+      <span id="tokensUsed">0 / 1,000,000 tokens used</span>
+      <span id="pagesRemaining">~1,333 pages remaining</span>
+    </div>
+  </div>
+  <!-- @if(!userstate.isActive()){ -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <span>Monthly Token Usage</span>
-            <select id="modelSelect" class="form-select" onchange="updateTokenDisplay()">
-                <option value="gpt4o">GPT-4o</option>
-                <option value="gpt41">GPT-4.1</option>
-                <option value="gpt35">GPT-3.5 Turbo</option>
-            </select>
+          <span class="card-title h5 mb-0">Values Created</span>
+          <span class="fs-3">🎯</span>
         </div>
-        <div class="token-bar bg-secondary rounded position-relative overflow-hidden">
-            <div class="token-fill bg-primary" id="tokenFill" style="width: 0%"></div>
+        <div class="fs-3 fw-bold text-primary" id="valuesCount">3 / 10</div>
+        <div class="text-muted small" id="valuesSlotsRemaining">
+          7 slots remaining
         </div>
-        <div class="d-flex justify-content-between text-muted small mt-2">
-            <span id="tokensUsed">0 / 1,000,000 tokens used</span>
-            <span id="pagesRemaining">~1,333 pages remaining</span>
-        </div>
+      </div>
     </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="card-title h5 mb-0">Documents Analyzed</span>
+          <span class="fs-3">📄</span>
+        </div>
+        <div class="fs-3 fw-bold text-success" id="docsAnalyzedCount">0</div>
+        <div class="text-muted small">This month</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="card-title h5 mb-0">Avg. Alignment</span>
+          <span class="fs-3">✨</span>
+        </div>
+        <div class="fs-3 fw-bold text-warning" id="avgAlignmentValue">-</div>
+        <div class="text-muted small" id="avgAlignmentText">
+          No analyses yet
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- } @else { -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card h-100 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="card-title h5 mb-0">Core Documents</span>
+          <span class="fs-3">📁</span>
+        </div>
+        <div class="fs-3 fw-bold text-primary" id="coreDocsStats">4 / 10</div>
+        <div class="text-muted small" id="coreDocsRemaining">
+          6 slots remaining
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="card-title h5 mb-0">Reference URLs</span>
+          <span class="fs-3">🔗</span>
+        </div>
+        <div class="fs-3 fw-bold text-success" id="refStats">2 / 5</div>
+        <div class="text-muted small" id="refRemaining">3 slots remaining</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="card-title h5 mb-0">Documents Analyzed</span>
+          <span class="fs-3">📄</span>
+        </div>
+        <div class="fs-3 fw-bold text-warning" id="analysisCount">0</div>
+        <div class="text-muted small">This month</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="card-title h5 mb-0">Avg. Alignment</span>
+          <span class="fs-3">✨</span>
+        </div>
+        <div class="fs-3 fw-bold text-success" id="avgAlignment">-</div>
+        <div class="text-muted small" id="alignmentText">No analyses yet</div>
+      </div>
+    </div>
+  </div>
+  <!-- } -->
 
-    <!-- Quick Stats -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Values Created</span>
-                    <span class="fs-3">🎯</span>
-                </div>
-                <div class="fs-3 fw-bold text-primary" id="valuesCount">3 / 10</div>
-                <div class="text-muted small" id="valuesSlotsRemaining">7 slots remaining</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Documents Analyzed</span>
-                    <span class="fs-3">📄</span>
-                </div>
-                <div class="fs-3 fw-bold text-success" id="docsAnalyzedCount">0</div>
-                <div class="text-muted small">This month</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Avg. Alignment</span>
-                    <span class="fs-3">✨</span>
-                </div>
-                <div class="fs-3 fw-bold text-warning" id="avgAlignmentValue">-</div>
-                <div class="text-muted small" id="avgAlignmentText">No analyses yet</div>
-            </div>
-        </div>
+  <!-- Recent Activity -->
+  <div class="card p-3">
+    <h5 class="card-title">Recent Activity</h5>
+    <div class="text-center py-3" id="recentActivityList">
+      No analyses yet. Start by analyzing a document.
     </div>
-
-    <!-- Second Stats Section -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card h-100 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Core Documents</span>
-                    <span class="fs-3">📁</span>
-                </div>
-                <div class="fs-3 fw-bold text-primary" id="coreDocsStats">4 / 10</div>
-                <div class="text-muted small" id="coreDocsRemaining">6 slots remaining</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Reference URLs</span>
-                    <span class="fs-3">🔗</span>
-                </div>
-                <div class="fs-3 fw-bold text-success" id="refStats">2 / 5</div>
-                <div class="text-muted small" id="refRemaining">3 slots remaining</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Documents Analyzed</span>
-                    <span class="fs-3">📄</span>
-                </div>
-                <div class="fs-3 fw-bold text-warning" id="analysisCount">0</div>
-                <div class="text-muted small">This month</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="card-title h5 mb-0">Avg. Alignment</span>
-                    <span class="fs-3">✨</span>
-                </div>
-                <div class="fs-3 fw-bold text-success" id="avgAlignment">-</div>
-                <div class="text-muted small" id="alignmentText">No analyses yet</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="card p-3">
-        <h5 class="card-title">Recent Activity</h5>
-        <div class="text-center py-3" id="recentActivityList">
-            No analyses yet. Start by analyzing a document.
-        </div>
-    </div>
+  </div>
 </section>
