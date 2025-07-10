@@ -1,49 +1,29 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, signal, TemplateRef } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MyValues } from './my-value.interface';
+import { NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TemplateRef } from '@angular/core';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { AddMyValue, MyValues } from './my-value.interface';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-interface Value {
-  id: number;
-  name: string;
-  description: string;
-  tolerance: number;
-}
+import { MyValueService } from '../../../shared/services/my-value.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 @Component({
   selector: 'app-my-values',
-  imports: [NgFor, FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, NgIf],
   templateUrl: './my-values.component.html',
-  styleUrl: './my-values.component.css'
+  styleUrl: './my-values.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyValuesComponent {
   values = signal<MyValues[]>([]);
   selectedValueCard!: MyValues;
   isEditing = signal<boolean>(false);
-
   myValueForm!: FormGroup;
+  wordCount = signal(0)
+  wordCountValid = signal<boolean>(false);
+  editingValueId = signal<number | null>(null);
+  destroyRef = inject(DestroyRef);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private modalService: NgbModal
-  ) {
-    this.myValueForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      databaseServer: ['', Validators.required],
-      databaseUser: ['', Validators.required],
-      databaseName: ['', Validators.required],
-      azureSecretKeyName: ['', Validators.required],
-    });
-  }
-
-
-  onSave(): void {
-    if (this.myValueForm.invalid) {
-      this.myValueForm.markAllAsTouched();
-      return;
-    }
-  }
-
-  value: Value[] = [
+  value: MyValues[] = [
     {
       id: 1,
       name: "Innovation & Excellence",
@@ -83,54 +63,139 @@ export class MyValuesComponent {
     }
   };
 
+  constructor(
+    config: NgbModalConfig,
+    private modalService: NgbModal,
+    private formBuilder: FormBuilder,
+    private myValueService: MyValueService
+  ) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+    this.myValueForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+      tolerance: [5, Validators.required]
+    });
+  }
 
   onAdd(content: TemplateRef<any>): void {
+    if (this.value.length >= 10) {
+      alert('You have reached the maximum of 10 values');
+      return;
+    }
+    this.isEditing.set(false);
+    this.myValueForm.reset();
+    this.wordCount.set(0);
+    this.editingValueId.set(null);
+    this.wordCountValid.set(false);
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'md' })
   }
 
-  showAddValueModal() {
-    if (this.values.length >= 10) {
-      // this.modalService.showToast('You have reached the maximum of 10 values', 'warning');
-      return;
-    }
-    // this.modalService.openValueModal(null);
+  onEdit(content: TemplateRef<any>, myValue: any): void {
+    this.selectedValueCard = myValue
+    this.isEditing.set(true);
+    this.myValueForm.patchValue({
+      ...myValue,
+    });
+    this.updateWordCount();
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'md' })
   }
 
-  editValue(id: number) {
-    const value = this.value.find(v => v.id === id);
-    if (value) {
-      // this.modalService.openValueModal(value);
-    }
+  onDelete(deleteContent: TemplateRef<any>, myValue: any) {
+    this.selectedValueCard = myValue;
+    this.modalService.open(deleteContent, { ariaLabelledBy: 'modal-basic-title', size: 'md' });
   }
 
-  deleteValue(id: number) {
-    if (confirm('Are you sure you want to delete this value?')) {
-      this.value = this.value.filter(v => v.id !== id);
-      // this.modalService.showToast('Value deleted', 'success');
-    }
+  useQuickValue(templateKey: keyof typeof this.quickValueTemplates): void {
+    const template = this.quickValueTemplates[templateKey];
+    this.myValueForm.patchValue({
+      name: template.name,
+      description: template.description
+    });
+    this.updateWordCount();
   }
 
   showUpgradeModal() {
-    // this.modalService.openUpgradeModal();
+    throw new Error('Method not implemented.');
   }
 
-  // This would be called when the modal saves a new or updated value
-  handleValueSaved(value: Value) {
-    if (value.id) {
-      // Update existing value
-      const index = this.value.findIndex(v => v.id === value.id);
-      if (index !== -1) {
-        this.value[index] = value;
-        // this.modalService.showToast('Value updated successfully', 'success');
-      }
-    } else {
-      // Create new value
-      const newValue = {
-        ...value,
-        id: Date.now()
-      };
-      this.value.push(newValue);
-      // this.modalService.showToast('Value added successfully', 'success');
-    }
+  updateWordCount(): void {
+    const text = this.myValueForm.get('description')?.value || '';
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    this.wordCount.set(words);
+    this.wordCountValid.set(words >= 35 && words <= 100);
   }
+
+  updateToleranceDisplay(): void {
+
+  }
+
+
+  getAllMyValues() {
+    // this.myValueService.getAllMyValues()
+    //   .pipe(takeUntilDestroyed(this.destroyRef),
+    //   )
+    //   .subscribe({
+    //     next: res => {
+    //     },
+    //     error: err => {
+    //     }
+    //   });
+  }
+
+  onSave(): void {
+    if (this.myValueForm.invalid) {
+      this.myValueForm.markAllAsTouched();
+      return;
+    }
+    if (this.isEditing())
+      this.updateMyValue();
+    else
+      this.addMyValue();
+  }
+
+  addMyValue() {
+    // this.myValueService.addMyValue({ ...this.myValueForm.value } as AddMyValue)
+    //   .pipe(takeUntilDestroyed(this.destroyRef),
+    //   )
+    //   .subscribe({
+    //     next: res => {
+    //       this.modalService.dismissAll();
+    //       this.getAllMyValues();
+    //     },
+    //     error: err => {
+    //       console.log("Failed to add CIM Environments.");
+    //     }
+    //   })
+  }
+
+  updateMyValue() {
+    // this.myValueService.updateMyValue({ ...this.myValueForm.value, id: this.selectedValueCard.id } as AddMyValue)
+    //   .pipe(takeUntilDestroyed(this.destroyRef),
+    //   )
+    //   .subscribe({
+    //     next: res => {
+    //       this.modalService.dismissAll();
+    //       this.getAllMyValues();
+    //     },
+    //     error: err => {
+    //     }
+    //   })
+  }
+
+  deleteMyValue(): void {
+    // this.myValueService.deleteMyValue(this.selectedValueCard.id)
+    //   .pipe(takeUntilDestroyed(this.destroyRef)
+    //   )
+    //   .subscribe({
+    //     next: res => {
+    //       this.modalService.dismissAll();
+    //       this.getAllMyValues();
+    //     },
+    //     error: err => {
+    //     }
+    //   });
+  }
+
 }
+

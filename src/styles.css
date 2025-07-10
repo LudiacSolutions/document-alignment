@@ -97,3 +97,15 @@ body {
   background-color: white;
   color: black;
 }
+
+.btn-cust-danger {
+  background-color: var(--danger);
+  border: 1px solid var(--danger);
+  color: white;
+}
+
+.btn-cust-danger:hover {
+  border: 1px solid var(--danger);
+  background-color: white;
+  color: var(--dangerColor);
+}
