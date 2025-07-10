@@ -1,0 +1,38 @@
+@if (errors && touched) {
+    <div class="text-danger fst-italic ms-1 text-sm">
+        @if (errors['required']) {
+            <div>This field is required.</div>
+        }
+        @if (errors['minlength']) {
+            <div>Minimum length is {{ errors['minlength'].requiredLength }}.</div>
+        }
+        @if (errors['maxlength']) {
+            <div>Maximum length is {{ errors['maxlength'].requiredLength }}.</div>
+        }
+        @if (errors['email']) {
+            <div>Invalid email address.</div>
+        }
+        @if (isPasswordPatternFailure) {
+            <div>
+                <div>Password must have:</div>
+                <ul class="pl-4">
+                    @if (!failedPasswordRules.hasUpperCase) {
+                        <li>At least one uppercase letter</li>
+                    }
+                    @if (!failedPasswordRules.hasLowerCase) {
+                        <li>At least one lowercase letter</li>
+                    }
+                    @if (!failedPasswordRules.hasDigit) {
+                        <li>At least one digit</li>
+                    }
+                    @if (!failedPasswordRules.hasSpecialChar) {
+                        <li>At least one special character</li>
+                    }
+                    @if (!failedPasswordRules.hasMinLength) {
+                        <li>Minimum length of 8</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+}
