@@ -1,0 +1,8 @@
+<div class="toast-container">
+  @for (toast of toastService.toastList(); track toast) {
+  <div class="toaster" [ngClass]="toast.type">
+    <div class="message">{{ toast.message }}</div>
+    <div class="progress-bar" [ngClass]="toast.type"></div>
+  </div>
+  }
+</div>

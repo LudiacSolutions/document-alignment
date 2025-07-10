@@ -1,0 +1,75 @@
+.toast-container {
+  position: fixed;
+  top: 90px;
+  right: 50px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toaster {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  color: black;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Toast type borders or colored left strip (optional) */
+.success {
+  border-left: 5px solid #10b981;
+}
+.error {
+  border-left: 5px solid #ef4444;
+}
+.warning {
+  border-left: 5px solid #f59e0b;
+}
+.info {
+  border-left: 5px solid #3b82f6;
+}
+
+.message {
+  padding-bottom: 4px;
+}
+
+/* Progress bar */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  animation: shrink 3s linear forwards;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Progress bar colors */
+.progress-bar.success {
+  background-color: #10b981;
+}
+.progress-bar.error {
+  background-color: #ef4444;
+}
+.progress-bar.warning {
+  background-color: #f59e0b;
+}
+.progress-bar.info {
+  background-color: #3b82f6;
+}
+
+/* Animation for progress bar */
+@keyframes shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
