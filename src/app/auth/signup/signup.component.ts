@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService, SignUpData } from '../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { ValidationErrorsComponent } from '../../shared/components/validation-errors/validation-errors.component';
+import { SignUpData } from '../interface/auth.interface';
 
 @Component({
   selector: 'app-signup',

@@ -3,33 +3,18 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable, tap } from 'rxjs';
 import { CookieUtil } from '../../shared/utils/cookie.util';
+import { AuthServerResponse } from '../../shared/interfaces/server-response.interface';
+import { ResetPasswordData, SignInData, SignUpData } from '../interface/auth.interface';
 
-export interface SignUpData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-export interface SignInData {
-  email: string;
-  password: string;
-}
-
-interface ServerResponse {
-  token: string;
-  message: string;
-  Role: string;
-}
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   constructor(private http: HttpClient) {}
 
-  signUpUser(signUpData: SignUpData): Observable<ServerResponse> {
+  signUpUser(signUpData: SignUpData): Observable<AuthServerResponse> {
     return this.http
-      .post<ServerResponse>(
+      .post<AuthServerResponse>(
         `${environment.baseUrl}Accounts/register`,
         signUpData
       )
@@ -40,9 +25,9 @@ export class AuthService {
       );
   }
 
-  signInUser(signInData: SignInData): Observable<ServerResponse> {
+  signInUser(signInData: SignInData): Observable<AuthServerResponse> {
     return this.http
-      .post<ServerResponse>(`${environment.baseUrl}Accounts/login`, signInData)
+      .post<AuthServerResponse>(`${environment.baseUrl}Accounts/login`, signInData)
       .pipe(
         tap((response) => {
           this.setToken(response.token);
@@ -64,6 +49,14 @@ export class AuthService {
 
   logout(){
     CookieUtil.deleteCookie('accessToken');
+  }
+
+  forgotPassword(email : string){
+    return this.http.post(`${environment.baseUrl}Accounts/ForgetPassword`, email);
+  }
+
+  resetPassword(resetPasswordData : ResetPasswordData){
+    return this.http.post(`${environment.baseUrl}Accounts/ResetPassword`, resetPasswordData);
   }
 
   decodeJwtPayload(token: string) {
