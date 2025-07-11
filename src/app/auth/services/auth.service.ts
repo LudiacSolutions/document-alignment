@@ -10,6 +10,12 @@ export interface SignUpData {
   email: string;
   password: string;
 }
+export interface ResetPasswordData {
+  email: string;
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export interface SignInData {
   email: string;
@@ -64,6 +70,14 @@ export class AuthService {
 
   logout(){
     CookieUtil.deleteCookie('accessToken');
+  }
+
+  forgotPassword(email : string){
+    return this.http.post(`${environment.baseUrl}Accounts/ForgetPassword`, email);
+  }
+
+  resetPassword(resetPasswordData : ResetPasswordData){
+    return this.http.post(`${environment.baseUrl}Accounts/ResetPassword`, resetPasswordData);
   }
 
   decodeJwtPayload(token: string) {

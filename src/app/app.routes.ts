@@ -1,25 +1,5 @@
 import { Routes } from '@angular/router';
-import { OverviewComponent } from './feature/admin-layout/main/overview/overview.component';
-import { UserComponent } from './feature/admin-layout/main/user/user.component';
-import { BillingComponent } from './feature/admin-layout/main/billing/billing.component';
-import { UsageStatsComponent } from './feature/admin-layout/analytics/usage-stats/usage-stats.component';
-import { PerformanceComponent } from './feature/admin-layout/analytics/performance/performance.component';
-import { ApiKeysComponent } from './feature/admin-layout/system/api-keys/api-keys.component';
-import { SettingsComponent } from './feature/user-layout/settings/settings.component';
-import { LogsComponent } from './feature/admin-layout/system/logs/logs.component';
-import { DashboardComponent } from './feature/user-layout/dashboard/dashboard.component';
-import { CoreDocumentsComponent } from './feature/user-layout/core-documents/core-documents.component';
-import { ReferencesComponent } from './feature/user-layout/references/references.component';
-import { NewAnalysisComponent } from './feature/user-layout/new-analysis/new-analysis.component';
-import { HistoryComponent } from './feature/user-layout/history/history.component';
-import { AdminSettingsComponent } from './feature/admin-layout/system/admin-settings/admin-settings.component';
-import { AdminLayoutComponent } from './feature/admin-layout/admin-layout.component';
-import { UserLayoutComponent } from './feature/user-layout/user-layout.component';
-import { MyValuesComponent } from './feature/user-layout/my-values/my-values.component';
-import { SignupComponent } from './auth/signup/signup.component';
-import { SigninComponent } from './auth/signin/signin.component';
 import { authGuard } from './core/gaurd/auth.guard';
-import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 import { roleGuard } from './core/gaurd/role.guard';
 
 export const routes: Routes = [
@@ -30,70 +10,168 @@ export const routes: Routes = [
   },
   {
     path: 'signin',
-    component: SigninComponent,
     title: 'Sign In',
+    loadComponent: () =>
+      import('./auth/signin/signin.component').then((m) => m.SigninComponent),
   },
   {
     path: 'signup',
-    component: SignupComponent,
     title: 'Sign Up',
+    loadComponent: () =>
+      import('./auth/signup/signup.component').then((m) => m.SignupComponent),
   },
   {
     path: 'admin',
-    component: AdminLayoutComponent,
     canActivate: [authGuard, roleGuard],
     data: { expectedRole: 'Admin' },
+    loadComponent: () =>
+    import('./feature/admin-layout/admin-layout.component').then(
+      (m) => m.AdminLayoutComponent
+    ),
     children: [
-      { path: 'overview', component: OverviewComponent, title: 'Overview' },
-      { path: 'users', component: UserComponent, title: 'Users' },
-      { path: 'billing', component: BillingComponent, title: 'Billing' },
-      { path: 'usage', component: UsageStatsComponent, title: 'Usage stats' },
+      {
+        path: 'overview',
+        title: 'Overview',
+        loadComponent: () =>
+          import('./feature/admin-layout/main/overview/overview.component').then(
+            (m) => m.OverviewComponent
+          ),
+      },
+      {
+        path: 'users',
+        title: 'Users',
+        loadComponent: () =>
+          import('./feature/admin-layout/main/user/user.component').then(
+            (m) => m.UserComponent
+          ),
+      },
+      {
+        path: 'billing',
+        title: 'Billing',
+        loadComponent: () =>
+          import('./feature/admin-layout/main/billing/billing.component').then(
+            (m) => m.BillingComponent
+          ),
+      },
+      {
+        path: 'usage',
+        title: 'Usage Stats',
+        loadComponent: () =>
+          import('./feature/admin-layout/analytics/usage-stats/usage-stats.component').then(
+            (m) => m.UsageStatsComponent
+          ),
+      },
       {
         path: 'performance',
-        component: PerformanceComponent,
         title: 'Performance',
+        loadComponent: () =>
+          import('./feature/admin-layout/analytics/performance/performance.component').then(
+            (m) => m.PerformanceComponent
+          ),
       },
-      { path: 'api-keys', component: ApiKeysComponent, title: 'API keys' },
+      {
+        path: 'api-keys',
+        title: 'API Keys',
+        loadComponent: () =>
+          import('./feature/admin-layout/system/api-keys/api-keys.component').then(
+            (m) => m.ApiKeysComponent
+          ),
+      },
       {
         path: 'settings',
-        component: AdminSettingsComponent,
         title: 'Settings',
+        loadComponent: () =>
+          import('./feature/admin-layout/system/admin-settings/admin-settings.component').then(
+            (m) => m.AdminSettingsComponent
+          ),
       },
-      { path: 'logs', component: LogsComponent, title: 'Logs' },
+      {
+        path: 'logs',
+        title: 'Logs',
+        loadComponent: () =>
+          import('./feature/admin-layout/system/logs/logs.component').then(
+            (m) => m.LogsComponent
+          ),
+      },
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
     ],
   },
+
   {
     path: 'user',
-    component: UserLayoutComponent,
     canActivate: [authGuard, roleGuard],
     data: { expectedRole: 'User' },
+    loadComponent: () =>
+    import('./feature/user-layout/user-layout.component').then(
+      (m) => m.UserLayoutComponent
+    ),
     children: [
-      { path: 'dashboard', component: DashboardComponent, title: 'Dashboard' },
+      {
+        path: 'dashboard',
+        title: 'Dashboard',
+        loadComponent: () =>
+          import('./feature/user-layout/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent
+          ),
+      },
       {
         path: 'core-documents',
-        component: CoreDocumentsComponent,
         title: 'Core Documents',
+        loadComponent: () =>
+          import('./feature/user-layout/core-documents/core-documents.component').then(
+            (m) => m.CoreDocumentsComponent
+          ),
       },
-      { path: 'my-values', component: MyValuesComponent, title: 'My values' },
+      {
+        path: 'my-values',
+        title: 'My Values',
+        loadComponent: () =>
+          import('./feature/user-layout/my-values/my-values.component').then(
+            (m) => m.MyValuesComponent
+          ),
+      },
       {
         path: 'references',
-        component: ReferencesComponent,
         title: 'References',
+        loadComponent: () =>
+          import('./feature/user-layout/references/references.component').then(
+            (m) => m.ReferencesComponent
+          ),
       },
       {
         path: 'new-analysis',
-        component: NewAnalysisComponent,
         title: 'New Analysis',
+        loadComponent: () =>
+          import('./feature/user-layout/new-analysis/new-analysis.component').then(
+            (m) => m.NewAnalysisComponent
+          ),
       },
-      { path: 'history', component: HistoryComponent, title: 'History' },
-      { path: 'settings', component: SettingsComponent, title: 'Settings' },
+      {
+        path: 'history',
+        title: 'History',
+        loadComponent: () =>
+          import('./feature/user-layout/history/history.component').then(
+            (m) => m.HistoryComponent
+          ),
+      },
+      {
+        path: 'settings',
+        title: 'Settings',
+        loadComponent: () =>
+          import('./feature/user-layout/settings/settings.component').then(
+            (m) => m.SettingsComponent
+          ),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
+
   {
     path: '**',
-    component: PageNotFoundComponent,
     title: 'Page Not Found',
+    loadComponent: () =>
+      import('./shared/components/page-not-found/page-not-found.component').then(
+        (m) => m.PageNotFoundComponent
+      ),
   },
 ];
