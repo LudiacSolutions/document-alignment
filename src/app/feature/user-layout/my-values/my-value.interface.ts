@@ -1,8 +1,8 @@
 export interface MyValues {
-    id : number ;
+    id : string ;
     name: string;
-    description: string
-    tolerance: number
+    description: string;
+    complianceTolerance: number
 }
 
 export interface AddMyValue extends Partial<MyValues>{

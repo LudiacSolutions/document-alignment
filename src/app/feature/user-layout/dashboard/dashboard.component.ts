@@ -14,10 +14,10 @@ export class DashboardComponent {
   // name = signal<string>('');
 
   constructor() {
-    console.log('Dashboard component constructor');
+    // console.log('Dashboard component constructor');
   }
   ngOnInit() {
-    console.log('Dashboard component onInit');
+    // console.log('Dashboard component onInit');
   }
   // changeValueOfSignal() {
   //   console.log('Signal', this.isActive());

@@ -8,29 +8,29 @@
     </button>
 
     <div class="values-grid" id="valuesGrid">
-        @for (value of value; track $index) {
+        @for (value of values(); track $index) {
         <div class="value-card">
             <div class="value-header">
                 <div class="value-title">{{value.name}}</div>
                 <div class="value-actions">
                     <button class="icon-btn" (click)="onEdit(content, value)">✏️</button>
-                    <button class="icon-btn" (click)="onDelete(content, value)">🗑️</button>
+                    <button class="icon-btn" (click)="onDelete(deleteContent, value)">🗑️</button>
                 </div>
             </div>
             <p class="text-muted mb-3">{{value.description}}</p>
             <div class="tolerance-container">
                 <div class="tolerance-header">
                     <span class="tolerance-label">Compliance Tolerance</span>
-                    <span class="tolerance-value">{{value.tolerance}}/10</span>
+                    <span class="tolerance-value">{{value.complianceTolerance}}/10</span>
                 </div>
-                <input type="range" class="slider" min="1" max="10" [value]="value.tolerance" disabled>
+                <input type="range" class="slider" [value]="value.complianceTolerance" min="1" max="10" disabled>
             </div>
         </div>
         }
     </div>
 
     <div class="card mt-4 text-center p-3">
-        <span class="text-muted">You have used {{value.length}} of 10 available value slots</span>
+        <span class="text-muted">You have used {{values().length}} of 10 available value slots</span>
     </div>
 
     <!-- Locked PRO Features -->
@@ -40,7 +40,8 @@
                 <div class="text-center">
                     <span class="pro-feature-icon">🔒</span>
                     <p class="pro-feature-title">Upload Core Documents</p>
-                    <button class="btn btn-primary" (click)="showUpgradeModal()">Upgrade to PRO</button>
+                    <button class="btn btn-primary" (click)="onUpGradePlan(upGradeContent, values)">Upgrade to
+                        PRO</button>
                 </div>
             </div>
             <h3 class="card-title">Upload Core Documents (PRO Feature)</h3>
@@ -53,7 +54,8 @@
                 <div class="text-center">
                     <span class="pro-feature-icon">🔒</span>
                     <p class="pro-feature-title">Copy and Paste Core Reference URL</p>
-                    <button class="btn btn-primary" (click)="showUpgradeModal()">Upgrade to PRO</button>
+                    <button class="btn btn-primary" (click)="onUpGradePlan(upGradeContent, values)">Upgrade to
+                        PRO</button>
                 </div>
             </div>
             <h3 class="card-title">Copy and Paste Core Reference URL (PRO Feature)</h3>
@@ -63,6 +65,7 @@
     </div>
 </div>
 
+<!-- Add Edit/Model -->
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">{{isEditing() ? 'Edit' : 'Add'}} Value</h4>
@@ -98,36 +101,27 @@
                 <label>Value Name</label>
                 <input type="text" formControlName="name" class="form-control mt-1"
                     placeholder="e.g., Innovation & Excellence">
+                <app-validation-errors [control]="myValueForm.get('name')"></app-validation-errors>
             </div>
             <div class="form-group mb-3">
                 <label>Value Description</label>
                 <textarea formControlName="description" class="form-control mt-1"
-                    placeholder="Describe this value in 35-100 words..." (input)="updateWordCount()"></textarea>
-
-                <div *ngIf="myValueForm.get('description')?.errors" class="text-danger small mt-1">
-                    <div *ngIf="myValueForm.get('description')?.errors?.['minWords']">
-                        Minimum 35 words required (currently
-                        {{myValueForm.get('description')?.errors?.['minWords'].actual}})
-                    </div>
-                    <div *ngIf="myValueForm.get('description')?.errors?.['maxWords']">
-                        Maximum 100 words allowed (currently
-                        {{myValueForm.get('description')?.errors?.['maxWords'].actual}})
-                    </div>
-                </div>
+                    placeholder="Describe this value in 35-100 words..." (input)="updateWordCount()">
+                </textarea>
+                <app-validation-errors [control]="myValueForm.get('description')"></app-validation-errors>
                 <div class="word-counter mt-1" [class.text-danger]="wordCount() < 35 || wordCount() > 100"
                     [class.text-success]="wordCount() >= 35 && wordCount() <= 100">
                     {{ wordCount() }} / 35-100 words
                 </div>
             </div>
-
             <div class="form-group">
                 <label>Compliance Tolerance</label>
                 <div class="tolerance-container">
                     <div class="tolerance-header">
                         <span class="tolerance-label">How strictly should documents align?</span>
-                        <span class="tolerance-value">{{ myValueForm.get('tolerance')?.value }}/10</span>
+                        <span class="tolerance-value">{{ myValueForm.get('complianceTolerance')?.value }}/10</span>
                     </div>
-                    <input type="range" class="slider" formControlName="tolerance" min="1" max="10"
+                    <input type="range" class="slider" formControlName="complianceTolerance" min="1" max="10"
                         (input)="updateToleranceDisplay()">
                     <div class="tolerance-labels">
                         <span>Flexible</span>
@@ -140,10 +134,84 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn-cust btn-cust-close" (click)="modal.close('Close click')">Cancel</button>
-        <button type="button" class="btn-cust btn-cust-primary" (click)="onSave()"
-            [disabled]="!myValueForm.valid || !wordCountValid">
+        <button type="button" class="btn-cust btn-cust-primary" (click)="onSave()">
             Save
         </button>
+    </div>
+</ng-template>
+
+<!-- UpGrade/Model -->
+<ng-template #upGradeContent let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Upgrade to PRO</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="text-center mb-4">
+            <h2 class="text-primary mb-2">$49 AUD/month</h2>
+            <p class="text-muted">or $504/year (save $84)</p>
+        </div>
+
+        <span class="mb-3">PRO Features Include:</span>
+        <ul class="list-unstyled">
+            <li class="py-2 text-success">✓ Upload up to 10 Core Documents</li>
+            <li class="py-2 text-success">✓ Add up to 5 Reference URLs</li>
+            <li class="py-2 text-success">✓ Access to GPT-4 Turbo (GPT-4.5)</li>
+            <li class="py-2 text-success">✓ 4x more tokens for most models</li>
+            <li class="py-2 text-success">✓ Advanced alignment analysis</li>
+            <li class="py-2 text-success">✓ Priority support</li>
+        </ul>
+
+        <div class="mt-4">
+            <span class="mb-3">Token Limits Comparison</span>
+            <table class="table comparison-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th class="free-column">FREE Plan</th>
+                        <th class="pro-column">PRO Plan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="model-name">GPT-4.5 Turbo</td>
+                        <td class="free-column not-available">❌ Not Available</td>
+                        <td class="pro-column">
+                            <div class="highlight">✓ Available</div>
+                            <div class="small">
+                                Input: 133,333 tokens (~178 pages)<br>
+                                Output: 66,666 tokens (~89 pages)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="model-name">GPT-4o</td>
+                        <td class="free-column">
+                            <div class="small">
+                                Input: 1M tokens (~1,333 pages)<br>
+                                Output: 250K tokens (~333 pages)
+                            </div>
+                        </td>
+                        <td class="pro-column">
+                            <div class="highlight">4x More!</div>
+                            <div class="small">
+                                Input: 4M tokens (~5,333 pages)<br>
+                                Output: 1M tokens (~1,333 pages)
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 p-3 bg-light rounded">
+            <p class="small text-muted text-center mb-0">
+                <strong>Note:</strong> Page approximations are based on ~750 tokens per A4 page
+            </p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-cust btn-cust-close" (click)="modal.close('Close click')">Maybe later</button>
+        <button class="btn-cust btn-cust-primary" (click)="upGradePlan()">Upgrade Now</button>
     </div>
 </ng-template>
 
