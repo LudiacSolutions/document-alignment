@@ -3,21 +3,21 @@
         <h1>My Values</h1>
         <p>Your FREE plan lets you define up to 10 organizational values and descriptors for document alignment.</p>
     </div>
-
-    <button class="btn-cust btn-cust-primary" (click)="onAdd(content)" style="margin-bottom: 2rem;">
+    <button class="btn-cust btn-cust-primary mb-4" (click)="onAdd(content)">
         + Add New Value
     </button>
 
     <div class="values-grid" id="valuesGrid">
-        <div class="value-card" *ngFor="let value of value">
+        @for (value of value; track $index) {
+        <div class="value-card">
             <div class="value-header">
                 <div class="value-title">{{value.name}}</div>
                 <div class="value-actions">
-                    <button class="icon-btn" (click)="editValue(value.id)">✏️</button>
-                    <button class="icon-btn" (click)="deleteValue(value.id)">🗑️</button>
+                    <button class="icon-btn" (click)="onEdit(content, value)">✏️</button>
+                    <button class="icon-btn" (click)="onDelete(content, value)">🗑️</button>
                 </div>
             </div>
-            <p style="color: var(--text-light); margin-bottom: 1rem;">{{value.description}}</p>
+            <p class="text-muted mb-3">{{value.description}}</p>
             <div class="tolerance-container">
                 <div class="tolerance-header">
                     <span class="tolerance-label">Compliance Tolerance</span>
@@ -26,41 +26,38 @@
                 <input type="range" class="slider" min="1" max="10" [value]="value.tolerance" disabled>
             </div>
         </div>
+        }
     </div>
 
-    <div class="card" style="margin-top: 2rem; padding: 1rem; text-align: center;">
-        <p style="color: var(--text-light);">You have used {{value.length}} of 10 available value slots</p>
+    <div class="card mt-4 text-center p-3">
+        <span class="text-muted">You have used {{value.length}} of 10 available value slots</span>
     </div>
 
     <!-- Locked PRO Features -->
-    <div style="margin-top: 3rem;">
-        <div class="card" style="position: relative; opacity: 0.7; margin-bottom: 1rem;">
-            <div
-                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; border-radius: 12px; z-index: 10;">
-                <div style="text-align: center;">
-                    <span style="font-size: 2rem;">🔒</span>
-                    <p style="font-weight: 600; margin-top: 0.5rem;">Upload Core Documents</p>
-                    <button class="btn btn-primary" (click)="showUpgradeModal()" style="margin-top: 1rem;">Upgrade to
-                        PRO</button>
+    <div class="mt-5">
+        <div class="card position-relative pro-feature-card mb-3">
+            <div class="pro-feature-overlay">
+                <div class="text-center">
+                    <span class="pro-feature-icon">🔒</span>
+                    <p class="pro-feature-title">Upload Core Documents</p>
+                    <button class="btn btn-primary" (click)="showUpgradeModal()">Upgrade to PRO</button>
                 </div>
             </div>
             <h3 class="card-title">Upload Core Documents (PRO Feature)</h3>
-            <p style="color: var(--text-light);">Upload PDFs, Word docs, or enter text for your mission statements,
+            <p class="text-light">Upload PDFs, Word docs, or enter text for your mission statements,
                 brand guidelines, and other core documents</p>
         </div>
 
-        <div class="card" style="position: relative; opacity: 0.7;">
-            <div
-                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; border-radius: 12px; z-index: 10;">
-                <div style="text-align: center;">
-                    <span style="font-size: 2rem;">🔒</span>
-                    <p style="font-weight: 600; margin-top: 0.5rem;">Copy and Paste Core Reference URL</p>
-                    <button class="btn btn-primary" (click)="showUpgradeModal()" style="margin-top: 1rem;">Upgrade to
-                        PRO</button>
+        <div class="card position-relative pro-feature-card">
+            <div class="pro-feature-overlay">
+                <div class="text-center">
+                    <span class="pro-feature-icon">🔒</span>
+                    <p class="pro-feature-title">Copy and Paste Core Reference URL</p>
+                    <button class="btn btn-primary" (click)="showUpgradeModal()">Upgrade to PRO</button>
                 </div>
             </div>
             <h3 class="card-title">Copy and Paste Core Reference URL (PRO Feature)</h3>
-            <p style="color: var(--text-light);">Add external compliance documents, industry standards, and regulatory
+            <p class="text-light">Add external compliance documents, industry standards, and regulatory
                 requirements</p>
         </div>
     </div>
@@ -68,16 +65,99 @@
 
 <ng-template #content let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">{{isEditing() ? 'Edit' : 'Add'}} new Value</h4>
+        <h4 class="modal-title">{{isEditing() ? 'Edit' : 'Add'}} Value</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
+        <div id="quickValuesSection" *ngIf="!isEditing()">
+            <h4 class="mb-3">Quick Start Templates</h4>
+            <div class="quick-values-grid">
+                <div class="quick-value-card" (click)="useQuickValue('innovation')">
+                    <div class="quick-value-title">💡 Innovation & Creativity</div>
+                    <div class="quick-value-desc">Foster creative thinking and breakthrough solutions</div>
+                </div>
+                <div class="quick-value-card" (click)="useQuickValue('customer')">
+                    <div class="quick-value-title">👥 Customer First</div>
+                    <div class="quick-value-desc">Prioritize customer needs and satisfaction</div>
+                </div>
+                <div class="quick-value-card" (click)="useQuickValue('sustainability')">
+                    <div class="quick-value-title">🌱 Sustainability</div>
+                    <div class="quick-value-desc">Environmental responsibility and sustainable practices</div>
+                </div>
+                <div class="quick-value-card" (click)="useQuickValue('diversity')">
+                    <div class="quick-value-title">🤝 Diversity & Inclusion</div>
+                    <div class="quick-value-desc">Embrace diverse perspectives and inclusive culture</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <span class="text-muted">— OR —</span>
+            </div>
+        </div>
         <form [formGroup]="myValueForm">
-    
+            <div class="form-group mb-3">
+                <label>Value Name</label>
+                <input type="text" formControlName="name" class="form-control mt-1"
+                    placeholder="e.g., Innovation & Excellence">
+            </div>
+            <div class="form-group mb-3">
+                <label>Value Description</label>
+                <textarea formControlName="description" class="form-control mt-1"
+                    placeholder="Describe this value in 35-100 words..." (input)="updateWordCount()"></textarea>
+
+                <div *ngIf="myValueForm.get('description')?.errors" class="text-danger small mt-1">
+                    <div *ngIf="myValueForm.get('description')?.errors?.['minWords']">
+                        Minimum 35 words required (currently
+                        {{myValueForm.get('description')?.errors?.['minWords'].actual}})
+                    </div>
+                    <div *ngIf="myValueForm.get('description')?.errors?.['maxWords']">
+                        Maximum 100 words allowed (currently
+                        {{myValueForm.get('description')?.errors?.['maxWords'].actual}})
+                    </div>
+                </div>
+                <div class="word-counter mt-1" [class.text-danger]="wordCount() < 35 || wordCount() > 100"
+                    [class.text-success]="wordCount() >= 35 && wordCount() <= 100">
+                    {{ wordCount() }} / 35-100 words
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Compliance Tolerance</label>
+                <div class="tolerance-container">
+                    <div class="tolerance-header">
+                        <span class="tolerance-label">How strictly should documents align?</span>
+                        <span class="tolerance-value">{{ myValueForm.get('tolerance')?.value }}/10</span>
+                    </div>
+                    <input type="range" class="slider" formControlName="tolerance" min="1" max="10"
+                        (input)="updateToleranceDisplay()">
+                    <div class="tolerance-labels">
+                        <span>Flexible</span>
+                        <span>Moderate</span>
+                        <span>Strict</span>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn-cust btn-cust-close" (click)="modal.close('Close click')">Cancel</button>
-        <button type="button" class="btn-cust btn-cust-primary" (click)="onSave()">Save</button>
+        <button type="button" class="btn-cust btn-cust-primary" (click)="onSave()"
+            [disabled]="!myValueForm.valid || !wordCountValid">
+            Save
+        </button>
+    </div>
+</ng-template>
+
+<!-- Delete/Model -->
+<ng-template #deleteContent let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Are you sure?</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <p>Do you really want to delete Value?</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn-cust btn-cust-danger" (click)="deleteMyValue()">Delete</button>
+        <button type="button" class="btn-cust btn-cust-close" (click)="modal.close('Close click')">Cancel</button>
     </div>
 </ng-template>
