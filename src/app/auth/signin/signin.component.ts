@@ -18,8 +18,6 @@ import { SignInData } from '../interface/auth.interface';
   styleUrl: './signin.component.css',
 })
 export class SigninComponent {
-  email: string = '';
-  password: string = '';
   signInForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
@@ -52,11 +50,6 @@ export class SigninComponent {
 
   signInWithFacebook() {
     console.log('Sign in with Facebook');
-  }
-
-  forgotPassword() {
-    const role = this.authService.decodeToken();
-    console.log(role);
   }
 
   handleRoutes() {

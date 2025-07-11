@@ -4,7 +4,11 @@ import { environment } from '../../../environments/environment';
 import { Observable, tap } from 'rxjs';
 import { CookieUtil } from '../../shared/utils/cookie.util';
 import { AuthServerResponse } from '../../shared/interfaces/server-response.interface';
-import { ResetPasswordData, SignInData, SignUpData } from '../interface/auth.interface';
+import {
+  ResetPasswordData,
+  SignInData,
+  SignUpData,
+} from '../interface/auth.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +31,10 @@ export class AuthService {
 
   signInUser(signInData: SignInData): Observable<AuthServerResponse> {
     return this.http
-      .post<AuthServerResponse>(`${environment.baseUrl}Accounts/login`, signInData)
+      .post<AuthServerResponse>(
+        `${environment.baseUrl}Accounts/login`,
+        signInData
+      )
       .pipe(
         tap((response) => {
           this.setToken(response.token);
@@ -47,16 +54,27 @@ export class AuthService {
     return this.decodeJwtPayload(this.getToken());
   }
 
-  logout(){
+  logout() {
     CookieUtil.deleteCookie('accessToken');
   }
 
-  forgotPassword(email : string){
-    return this.http.post(`${environment.baseUrl}Accounts/ForgetPassword`, email);
+  forgotPassword(email: string): Observable<AuthServerResponse> {
+    return this.http.post<AuthServerResponse>(
+      `${environment.baseUrl}Accounts/ForgetPassword`,
+      JSON.stringify(email),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
 
-  resetPassword(resetPasswordData : ResetPasswordData){
-    return this.http.post(`${environment.baseUrl}Accounts/ResetPassword`, resetPasswordData);
+  resetPassword(resetPasswordData: ResetPasswordData) {
+    return this.http.post(
+      `${environment.baseUrl}Accounts/ResetPassword`,
+      resetPasswordData
+    );
   }
 
   decodeJwtPayload(token: string) {

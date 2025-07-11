@@ -12,7 +12,6 @@ import { SignUpData } from '../interface/auth.interface';
   styleUrl: './signup.component.css'
 })
 export class SignupComponent {
-  rememberMe: boolean = false;
   signUpForm = new FormGroup({
     firstName: new FormControl('', [Validators.required,Validators.minLength(1)]),
     lastName: new FormControl('', [Validators.required,Validators.minLength(1)]),

@@ -2,6 +2,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 
 interface User {
   id: number;
@@ -22,7 +23,7 @@ interface User {
 
 @Component({
   selector: 'app-user',
-  imports: [FormsModule, DatePipe, DecimalPipe],
+  imports: [FormsModule, DatePipe, DecimalPipe,PaginationComponent],
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css'],
   providers: [NgbModalConfig, NgbModal],

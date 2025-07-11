@@ -34,5 +34,8 @@
                 </ul>
             </div>
         }
+        @if (errors['mismatch']) {
+            <div>Passwords do not match.</div>
+        }
     </div>
 }

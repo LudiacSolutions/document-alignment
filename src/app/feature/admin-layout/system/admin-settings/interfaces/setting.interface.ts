@@ -1,8 +1,10 @@
-export interface GeneralSetting {
-  settingId: number;
+export interface AddGeneralSetting {
   systemName: string;
   supportEmail: string;
   defaultTimezone: string;
+}
+export interface GeneralSetting extends AddGeneralSetting {
+  settingId: number;
   lastUpdatedAt: string;
 }
 
@@ -30,4 +32,10 @@ export interface EmailNotification {
   tokenTopupPurchases: boolean;
   dailySummaryReports: boolean;
   lastUpdatedAt: string;
+}
+
+export interface SecuritySetting {
+    maxLoginAttempts: number,
+    sessionTimeout: number
+    lastUpdatedAt : string
 }

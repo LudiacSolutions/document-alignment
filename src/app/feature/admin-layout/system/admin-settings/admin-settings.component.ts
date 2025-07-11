@@ -1,5 +1,10 @@
 import { UpperCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -8,6 +13,15 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { AdminSettingService } from './services/admin-settings.service';
+import {
+  AddGeneralSetting,
+  EmailNotification,
+  FeatureLimitSetting,
+  SubscriptionSetting,
+  SecuritySetting,
+} from './interfaces/setting.interface';
+import { ToasterService } from '../../../../shared/Toaster/toaster.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-settings',
@@ -16,87 +30,194 @@ import { AdminSettingService } from './services/admin-settings.service';
   styleUrl: './admin-settings.component.css',
 })
 export class AdminSettingsComponent {
-  settings = {
-    systemName: 'Document Alignment System',
-    supportEmail: 'support@docalignsystem.com',
-    timezone: 'Australia/Sydney',
-    proPlanPrice: 49,
-    tokenTopupPrice: 10,
-    tokenTopupAmount: '50% of monthly limit',
-    freeMaxValues: 10,
-    freeWordCount: '35-100 words',
-    proMaxDocs: 10,
-    proMaxUrls: 5,
-    sessionTimeout: 60,
-    maxLoginAttempts: 5,
-    notifications: {
-      newUsers: true,
-      failedPayments: true,
-      highUsage: true,
-      tokenTopups: true,
-      dailySummary: false,
-    },
-  };
-
-  timezones = [
+  timezones: WritableSignal<string[]> = signal([
     'Australia/Sydney',
     'UTC',
     'America/New_York',
     'Europe/London',
     'Asia/Tokyo',
-  ];
+  ]);
+
+  subscriptionSettings: WritableSignal<SubscriptionSetting> = signal({
+    subscriptionSettingId: 1,
+    proPlanPriceAud: 49,
+    tokenTopupPriceAud: 10,
+    tokenTopupAmount: '50% of monthly limit',
+    lastUpdatedAt: this.getTimestamp(),
+  });
 
   generalSettingsForm = new FormGroup({
-    systemName: new FormControl('Document Alignment System'),
-    supportEmail: new FormControl('support@docalignsystem.com'),
-    defaultTimezone: new FormControl('Australia/Sydney'),
+    systemName: new FormControl<string | null>(null),
+    supportEmail: new FormControl<string | null>(null),
+    defaultTimezone: new FormControl<string | null>(null),
   });
 
   subscriptionForm = new FormGroup({
-    proPlanPriceAud: new FormControl(49),
-    tokenTopupPriceAud: new FormControl(10),
-    tokenTopupAmount: new FormControl('50% of monthly limit'),
+    proPlanPriceAud: new FormControl<number | null>(null),
+    tokenTopupPriceAud: new FormControl<number | null>(null),
+    tokenTopupAmount: new FormControl<string | null>(null),
   });
 
   featureLimitForm = new FormGroup({
-    features: new FormArray([]),
+    features: new FormArray<FormGroup>([]),
   });
 
   emailNotificationForm = new FormGroup({
-    newUserRegistrations: new FormControl(true),
-    failedPayments: new FormControl(true),
-    highApiUsageAlerts: new FormControl(true),
-    tokenTopupPurchases: new FormControl(true),
-    dailySummaryReports: new FormControl(false),
+    newUserRegistrations: new FormControl<boolean | null>(null),
+    failedPayments: new FormControl<boolean | null>(null),
+    highApiUsageAlerts: new FormControl<boolean | null>(null),
+    tokenTopupPurchases: new FormControl<boolean | null>(null),
+    dailySummaryReports: new FormControl<boolean | null>(null),
   });
 
-  get features(): FormArray {
-    return this.featureLimitForm.get('features') as FormArray;
+  securitySettingsForm = new FormGroup({
+    sessionTimeout: new FormControl<number | null>(null),
+    maxLoginAttempts: new FormControl<number | null>(null),
+  });
+
+  get features(): FormArray<FormGroup> {
+    return this.featureLimitForm.get('features') as FormArray<FormGroup>;
   }
 
-  constructor(private settingService: AdminSettingService,private cdr : ChangeDetectorRef) {}
+  private getTimestamp(): string {
+    return new Date().toISOString();
+  }
+
+  constructor(
+    private settingService: AdminSettingService,
+    private cdr: ChangeDetectorRef,
+    private toasterService: ToasterService
+  ) {}
 
   ngOnInit(): void {
-    // In a real app, you would load settings from a service
-  }
-  ngAfterViewInit(){
     this.loadSettings();
-
   }
 
   saveFeatureLimits(): void {
     const featureUpdates = (this.featureLimitForm.value.features ?? []).map(
-      (f: any) => ({
+      (f: FeatureLimitSetting) => ({
         limitId: f.limitId,
         featureName: f.featureName,
         planType: f.planType,
         limitValue: f.limitValue,
+        lastUpdatedAt: this.getTimestamp(),
       })
     );
 
-    console.log('Submitting feature limit updates:', featureUpdates);
-    alert('Feature limits updated!');
-    // Example: this.http.post('/api/update-feature-limits', featureUpdates).subscribe(...)
+    this.settingService
+      .addFeatureLimit(featureUpdates)
+      .pipe(
+        finalize(() => this.cdr.detectChanges())
+      )
+      .subscribe({
+        next: () => {
+          this.toasterService.showToast(
+            'Feature limits updated successfully',
+            'success'
+          );
+          this.getFeatureLimit();
+          this.featureLimitForm.markAsPristine();
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to update feature limits',
+            'error'
+          );
+        },
+      });
+  }
+
+  saveGeneralSettings(): void {
+    this.settingService
+      .addGeneralSettings(
+        this.generalSettingsForm.getRawValue() as AddGeneralSetting
+      )
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: () => {
+          this.toasterService.showToast(
+            'General settings updated successfully',
+            'success'
+          );
+          this.getGeneralSettings();
+          this.generalSettingsForm.markAsPristine();
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to update general settings',
+            'error'
+          );
+        },
+      });
+  }
+
+  saveSubscriptionSettings(): void {
+    const addSubscriptionSetting: SubscriptionSetting = {
+      ...(this.subscriptionForm.getRawValue() as SubscriptionSetting),
+      subscriptionSettingId: this.subscriptionSettings().subscriptionSettingId,
+      lastUpdatedAt: this.getTimestamp(),
+    };
+
+    this.settingService
+      .addSubscriptions(addSubscriptionSetting)
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: () => {
+          this.toasterService.showToast(
+            'Subscription settings updated successfully',
+            'success'
+          );
+          this.getSubscriptions(); 
+          this.subscriptionForm.markAsPristine();
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to update subscription settings',
+            'error'
+          );
+        },
+      });
+  }
+
+  saveEmailNotification(): void {
+    const addEmailData: EmailNotification = {
+      ...(this.emailNotificationForm.getRawValue() as EmailNotification),
+      lastUpdatedAt: this.getTimestamp(),
+    };
+
+    this.settingService
+      .addEmailNotifications(addEmailData)
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: () => {
+          this.toasterService.showToast(
+            'Email notification settings updated successfully',
+            'success'
+          );
+          this.getEmailNotifications(); 
+          this.emailNotificationForm.markAsPristine();
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to update email notifications',
+            'error'
+          );
+        },
+      });
+  }
+
+  saveSecuritySettings(): void {
+    const addSecurityData: SecuritySetting = {
+      ...(this.securitySettingsForm.getRawValue() as SecuritySetting),
+      lastUpdatedAt: this.getTimestamp(),
+    };
+    this.toasterService.showToast(
+      'Security settings updated successfully',
+      'success'
+    );
+    this.getSecuritySettings(); 
+    this.securitySettingsForm.markAsPristine();
+    this.cdr.detectChanges();
   }
 
   private loadSettings(): void {
@@ -104,112 +225,158 @@ export class AdminSettingsComponent {
     this.getSubscriptions();
     this.getFeatureLimit();
     this.getEmailNotifications();
+    this.getSecuritySettings();
   }
 
   saveSettings(): void {
-    // In a real app, you would save settings to a service
-    console.log('Saving settings:', this.settings);
-    console.log(this.subscriptionForm.value);
-    console.log(this.featureLimitForm.value);
-    console.log(this.emailNotificationForm.value);
-    console.log(this.generalSettingsForm.value);
+    let settingsSaved = false;
 
-    // Show success message
-    alert('Settings saved successfully!');
+    if (this.generalSettingsForm.dirty) {
+      this.saveGeneralSettings();
+      settingsSaved = true;
+    }
+    if (this.subscriptionForm.dirty) {
+      this.saveSubscriptionSettings();
+      settingsSaved = true;
+    }
+    if (this.featureLimitForm.dirty) {
+      this.saveFeatureLimits();
+      settingsSaved = true;
+    }
+    if (this.emailNotificationForm.dirty) {
+      this.saveEmailNotification();
+      settingsSaved = true;
+    }
+    if (this.securitySettingsForm.dirty) {
+      this.saveSecuritySettings();
+      settingsSaved = true;
+    }
+
+    if (!settingsSaved) {
+      this.toasterService.showToast('No settings changed to save.', 'info');
+    }
   }
 
   forceLogoutAll(): void {
-    if (confirm('Force logout all users? They will need to sign in again.')) {
-      console.log('Force logging out all users');
-      // Show success message
-      alert('All users have been logged out. They will need to sign in again.');
-    }
+    this.toasterService.showToast('Force logout all users initiated.', 'info');
   }
 
   resetToDefaults(): void {
-    if (confirm('Reset all settings to default values?')) {
-      this.settings = {
-        systemName: 'Document Alignment System',
-        supportEmail: 'support@docalignsystem.com',
-        timezone: 'Australia/Sydney',
-        proPlanPrice: 49,
-        tokenTopupPrice: 10,
-        tokenTopupAmount: '50% of monthly limit',
-        freeMaxValues: 10,
-        freeWordCount: '35-100 words',
-        proMaxDocs: 10,
-        proMaxUrls: 5,
-        sessionTimeout: 60,
-        maxLoginAttempts: 5,
-        notifications: {
-          newUsers: true,
-          failedPayments: true,
-          highUsage: true,
-          tokenTopups: true,
-          dailySummary: false,
+    this.toasterService.showToast('Resetting settings to defaults.', 'info');
+  }
+
+  getGeneralSettings(): void {
+    this.settingService
+      .getGeneralSettings()
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: (res) => {
+          if (res.data && res.data.length > 0) {
+            this.generalSettingsForm.patchValue({
+              systemName: res.data[0].systemName,
+              supportEmail: res.data[0].supportEmail,
+              defaultTimezone: res.data[0].defaultTimezone,
+            });
+            this.generalSettingsForm.markAsPristine();
+          }
         },
-      };
-      alert('Settings have been reset to default values.');
-    }
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to load general settings',
+            'error'
+          );
+        },
+      });
   }
 
-  getGeneralSettings() {
-    this.settingService.getGeneralSettings().subscribe({
-      next: (res) => {
-        this.generalSettingsForm.patchValue({
-          systemName: res.data[0].systemName,
-          supportEmail: res.data[0].supportEmail,
-          defaultTimezone: res.data[0].defaultTimezone,
-        });
-      },
-      error: (err) => {},
-    });
+  getSubscriptions(): void {
+    this.settingService
+      .getSubscriptions()
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: (res) => {
+          if (res.data && res.data.length > 0) {
+            this.subscriptionSettings.set(res.data[0]);
+            this.subscriptionForm.patchValue({
+              proPlanPriceAud: this.subscriptionSettings().proPlanPriceAud,
+              tokenTopupPriceAud:
+                this.subscriptionSettings().tokenTopupPriceAud,
+              tokenTopupAmount: this.subscriptionSettings().tokenTopupAmount,
+            });
+            this.subscriptionForm.markAsPristine();
+          }
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to load subscription settings',
+            'error'
+          );
+        },
+      });
   }
 
-  getSubscriptions() {
-    this.settingService.getSubscriptions().subscribe({
-      next: (res) => {
-        this.subscriptionForm.patchValue({
-          proPlanPriceAud: res.data[0].proPlanPriceAud,
-          tokenTopupPriceAud: res.data[0].tokenTopupPriceAud,
-          tokenTopupAmount: res.data[0].tokenTopupAmount,
-        });
-      },
-      error: (err) => {},
-    });
-  }
-
-  getFeatureLimit() {
-    this.settingService.getFeatureLimit().subscribe({
-      next: (res) => {
-        const backendData = res.data;
-        backendData.forEach((item) => {
-          const group = new FormGroup({
-            limitId: new FormControl(item.limitId),
-            featureName: new FormControl(item.featureName),
-            planType: new FormControl(item.planType),
-            limitValue: new FormControl(item.limitValue),
+  getFeatureLimit(): void {
+    this.settingService
+      .getFeatureLimit()
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: (res) => {
+          const backendData = res.data;
+          this.features.clear();
+          backendData.forEach((item) => {
+            const group = new FormGroup({
+              limitId: new FormControl(item.limitId),
+              featureName: new FormControl(item.featureName),
+              planType: new FormControl(item.planType),
+              limitValue: new FormControl(item.limitValue),
+            });
+            this.features.push(group);
           });
-          (this.featureLimitForm.get('features') as FormArray).push(group);
-        });
-        // this.cdr.detectChanges(); // Force view update
-      },
-      error: (err) => {},
-    });
+          this.featureLimitForm.markAsPristine();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to load feature limits',
+            'error'
+          );
+        },
+      });
   }
 
-  getEmailNotifications() {
-    this.settingService.getEmailNotifications().subscribe({
-      next: (res) => {
-        this.emailNotificationForm.patchValue({
-          newUserRegistrations: res.data[0].newUserRegistrations,
-          failedPayments: res.data[0].failedPayments,
-          highApiUsageAlerts: res.data[0].highApiUsageAlerts,
-          tokenTopupPurchases: res.data[0].tokenTopupPurchases,
-          dailySummaryReports: res.data[0].dailySummaryReports,
-        });
-      },
-      error: (err) => {},
-    });
+  getEmailNotifications(): void {
+    this.settingService
+      .getEmailNotifications()
+      .pipe(finalize(() => this.cdr.detectChanges()))
+      .subscribe({
+        next: (res) => {
+          if (res.data && res.data.length > 0) {
+            this.emailNotificationForm.patchValue({
+              newUserRegistrations: res.data[0].newUserRegistrations,
+              failedPayments: res.data[0].failedPayments,
+              highApiUsageAlerts: res.data[0].highApiUsageAlerts,
+              tokenTopupPurchases: res.data[0].tokenTopupPurchases,
+              dailySummaryReports: res.data[0].dailySummaryReports,
+            });
+            this.emailNotificationForm.markAsPristine();
+          }
+        },
+        error: (err) => {
+          this.toasterService.showToast(
+            err.title || 'Failed to load email notifications',
+            'error'
+          );
+        },
+      });
+  }
+
+  getSecuritySettings(): void {
+    const simulatedSecurityData = {
+      sessionTimeout: 60,
+      maxLoginAttempts: 5,
+    };
+    this.securitySettingsForm.patchValue(simulatedSecurityData);
+    this.securitySettingsForm.markAsPristine();
+    this.cdr.detectChanges();
   }
 }

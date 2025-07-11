@@ -29,7 +29,7 @@
       <div class="form-group">
         <label for="timezone">Default Timezone</label>
         <select id="timezone" formControlName="defaultTimezone">
-          @for (tz of timezones; track $index) {
+          @for (tz of timezones(); track $index) {
           <option [value]="tz">{{ tz }}</option>
           }
         </select>
@@ -133,22 +133,25 @@
   <!-- Security -->
   <div class="settings-card">
     <h3 class="settings-card-title">Security</h3>
-    <div class="form-group">
-      <label for="sessionTimeout">Session Timeout (minutes)</label>
-      <input
-        type="number"
-        id="sessionTimeout"
-        [(ngModel)]="settings.sessionTimeout"
-      />
-    </div>
-    <div class="form-group">
-      <label for="maxLoginAttempts">Max Login Attempts</label>
-      <input
-        type="number"
-        id="maxLoginAttempts"
-        [(ngModel)]="settings.maxLoginAttempts"
-      />
-    </div>
+    <form [formGroup]="securitySettingsForm">
+      <!-- New form group for security -->
+      <div class="form-group">
+        <label for="sessionTimeout">Session Timeout (minutes)</label>
+        <input
+          type="number"
+          id="sessionTimeout"
+          formControlName="sessionTimeout"
+        />
+      </div>
+      <div class="form-group">
+        <label for="maxLoginAttempts">Max Login Attempts</label>
+        <input
+          type="number"
+          id="maxLoginAttempts"
+          formControlName="maxLoginAttempts"
+        />
+      </div>
+    </form>
     <button class="btn btn-danger" (click)="forceLogoutAll()">
       Force Logout All Users
     </button>
