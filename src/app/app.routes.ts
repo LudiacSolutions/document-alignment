@@ -74,13 +74,17 @@ export const routes: Routes = [
         path: 'core-documents',
         component: CoreDocumentsComponent,
         title: 'Core Documents',
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: 'User' },
       },
-      { path: 'my-values', component: MyValuesComponent, title: 'My values' },
       {
         path: 'references',
         component: ReferencesComponent,
         title: 'References',
+        canActivate: [authGuard, roleGuard],
+        data: { expectedRole: 'User' },
       },
+      { path: 'my-values', component: MyValuesComponent, title: 'My values' },
       {
         path: 'new-analysis',
         component: NewAnalysisComponent,

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable, tap } from 'rxjs';
 import { CookieUtil } from '../../shared/utils/cookie.util';
@@ -25,6 +25,7 @@ interface ServerResponse {
   providedIn: 'root',
 })
 export class AuthService {
+  planUse = signal<boolean>(false);
   constructor(private http: HttpClient) {}
 
   signUpUser(signUpData: SignUpData): Observable<ServerResponse> {
@@ -62,7 +63,7 @@ export class AuthService {
     return this.decodeJwtPayload(this.getToken());
   }
 
-  logout(){
+  logout() {
     CookieUtil.deleteCookie('accessToken');
   }
 
@@ -70,9 +71,13 @@ export class AuthService {
     try {
       const payload = token.split('.')[1];
       const decoded = atob(payload);
-      return JSON.parse(decoded);
+      const parsed = JSON.parse(decoded);
+      console.log(parsed);
+      this.planUse.set(parsed?.Plan === 'pro');
+      return parsed;
     } catch (e) {
       console.error('Invalid token', e);
+      this.planUse.set(false);
       return null;
     }
   }
