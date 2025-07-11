@@ -1,5 +1,5 @@
 import { UpperCasePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -7,6 +7,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { AdminSettingService } from './services/admin-settings.service';
 
 @Component({
   selector: 'app-admin-settings',
@@ -73,49 +74,14 @@ export class AdminSettingsComponent {
     return this.featureLimitForm.get('features') as FormArray;
   }
 
+  constructor(private settingService: AdminSettingService,private cdr : ChangeDetectorRef) {}
+
   ngOnInit(): void {
     // In a real app, you would load settings from a service
-    this.loadSettings();
-    this.loadFeatureLimits();
   }
+  ngAfterViewInit(){
+    this.loadSettings();
 
-  private loadFeatureLimits(): void {
-    const backendData = [
-      {
-        limitId: 2,
-        planType: 'Free',
-        featureName: 'Max Values',
-        limitValue: '10',
-      },
-      {
-        limitId: 3,
-        planType: 'Free',
-        featureName: 'Value Word Count',
-        limitValue: '35-100',
-      },
-      {
-        limitId: 4,
-        planType: 'Pro',
-        featureName: 'Max Core Documents',
-        limitValue: '10',
-      },
-      {
-        limitId: 1,
-        planType: 'PRO',
-        featureName: 'Max Reference URLs',
-        limitValue: '5',
-      },
-    ];
-
-    backendData.forEach((item) => {
-      const group = new FormGroup({
-        limitId: new FormControl(item.limitId),
-        featureName: new FormControl(item.featureName),
-        planType: new FormControl(item.planType),
-        limitValue: new FormControl(item.limitValue),
-      });
-      (this.featureLimitForm.get('features') as FormArray).push(group);
-    });
   }
 
   saveFeatureLimits(): void {
@@ -134,11 +100,10 @@ export class AdminSettingsComponent {
   }
 
   private loadSettings(): void {
-    // Simulate loading settings from an API
-    setTimeout(() => {
-      // This would be replaced with actual API call
-      console.log('Settings loaded');
-    }, 500);
+    this.getGeneralSettings();
+    this.getSubscriptions();
+    this.getFeatureLimit();
+    this.getEmailNotifications();
   }
 
   saveSettings(): void {
@@ -148,7 +113,7 @@ export class AdminSettingsComponent {
     console.log(this.featureLimitForm.value);
     console.log(this.emailNotificationForm.value);
     console.log(this.generalSettingsForm.value);
-    
+
     // Show success message
     alert('Settings saved successfully!');
   }
@@ -186,5 +151,65 @@ export class AdminSettingsComponent {
       };
       alert('Settings have been reset to default values.');
     }
+  }
+
+  getGeneralSettings() {
+    this.settingService.getGeneralSettings().subscribe({
+      next: (res) => {
+        this.generalSettingsForm.patchValue({
+          systemName: res.data[0].systemName,
+          supportEmail: res.data[0].supportEmail,
+          defaultTimezone: res.data[0].defaultTimezone,
+        });
+      },
+      error: (err) => {},
+    });
+  }
+
+  getSubscriptions() {
+    this.settingService.getSubscriptions().subscribe({
+      next: (res) => {
+        this.subscriptionForm.patchValue({
+          proPlanPriceAud: res.data[0].proPlanPriceAud,
+          tokenTopupPriceAud: res.data[0].tokenTopupPriceAud,
+          tokenTopupAmount: res.data[0].tokenTopupAmount,
+        });
+      },
+      error: (err) => {},
+    });
+  }
+
+  getFeatureLimit() {
+    this.settingService.getFeatureLimit().subscribe({
+      next: (res) => {
+        const backendData = res.data;
+        backendData.forEach((item) => {
+          const group = new FormGroup({
+            limitId: new FormControl(item.limitId),
+            featureName: new FormControl(item.featureName),
+            planType: new FormControl(item.planType),
+            limitValue: new FormControl(item.limitValue),
+          });
+          (this.featureLimitForm.get('features') as FormArray).push(group);
+        });
+        // this.cdr.detectChanges(); // Force view update
+      },
+      error: (err) => {},
+    });
+  }
+
+  getEmailNotifications() {
+    this.settingService.getEmailNotifications().subscribe({
+      next: (res) => {
+        this.emailNotificationForm.patchValue({
+          newUserRegistrations: res.data[0].newUserRegistrations,
+          failedPayments: res.data[0].failedPayments,
+          highApiUsageAlerts: res.data[0].highApiUsageAlerts,
+          tokenTopupPurchases: res.data[0].tokenTopupPurchases,
+          dailySummaryReports: res.data[0].dailySummaryReports,
+        });
+      },
+      error: (err) => {},
+    });
   }
 }

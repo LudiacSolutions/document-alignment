@@ -24,11 +24,7 @@
       </div>
       <div class="form-group">
         <label for="supportEmail">Support Email</label>
-        <input
-          type="email"
-          id="supportEmail"
-          formControlName="supportEmail"
-        />
+        <input type="email" id="supportEmail" formControlName="supportEmail" />
       </div>
       <div class="form-group">
         <label for="timezone">Default Timezone</label>
@@ -86,7 +82,11 @@
             {{ feature.get("featureName")?.value }}</label
           >
           <input
-            [type]="feature.get('featureName')?.value == 'Value Word Count' ? 'text' : 'number'"
+            [type]="
+              feature.get('featureName')?.value == 'Value Word Count'
+                ? 'text'
+                : 'number'
+            "
             id="freeMaxValues"
             formControlName="limitValue"
           />
@@ -107,31 +107,22 @@
           New user registrations
         </label>
         <label class="checkbox-label">
-          <input
-            type="checkbox"
-             formControlName="failedPayments"
-          />
+          <input type="checkbox" formControlName="failedPayments" />
           <span class="checkbox-custom"></span>
           Failed payments
         </label>
         <label class="checkbox-label">
-          <input type="checkbox"  formControlName="highApiUsageAlerts" />
+          <input type="checkbox" formControlName="highApiUsageAlerts" />
           <span class="checkbox-custom"></span>
           High API usage alerts
         </label>
         <label class="checkbox-label">
-          <input
-            type="checkbox"
-             formControlName="tokenTopupPurchases"
-          />
+          <input type="checkbox" formControlName="tokenTopupPurchases" />
           <span class="checkbox-custom"></span>
           Token top-up purchases
         </label>
         <label class="checkbox-label">
-          <input
-            type="checkbox"
-            formControlName="dailySummaryReports"
-          />
+          <input type="checkbox" formControlName="dailySummaryReports" />
           <span class="checkbox-custom"></span>
           Daily summary reports
         </label>

@@ -6,9 +6,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService, SignInData } from '../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { ValidationErrorsComponent } from '../../shared/components/validation-errors/validation-errors.component';
 import { CookieUtil } from '../../shared/utils/cookie.util';
+import { SignInData } from '../interface/auth.interface';
 
 @Component({
   selector: 'app-signin',
