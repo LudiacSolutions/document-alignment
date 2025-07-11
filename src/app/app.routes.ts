@@ -21,6 +21,12 @@ export const routes: Routes = [
       import('./auth/signup/signup.component').then((m) => m.SignupComponent),
   },
   {
+    path: 'forget-password',
+    title: 'Forget Password',
+    loadComponent: () =>
+      import('./auth/forget-password/forget-password.component').then((m) => m.ForgetPasswordComponent),
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
     data: { expectedRole: 'Admin' },

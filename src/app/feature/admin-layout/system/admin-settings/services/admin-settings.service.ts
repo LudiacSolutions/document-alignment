@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ServerResponse } from '../../../../../shared/interfaces/server-response.interface';
-import { EmailNotification, FeatureLimitSetting, GeneralSetting, SubscriptionSetting } from '../interfaces/setting.interface';
+import { AddGeneralSetting, EmailNotification, FeatureLimitSetting, GeneralSetting, SubscriptionSetting } from '../interfaces/setting.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,9 +17,21 @@ export class AdminSettingService {
     );
   }
 
+  addGeneralSettings(generalSetting : AddGeneralSetting): Observable<ServerResponse<GeneralSetting>> {
+    return this.http.post<ServerResponse<GeneralSetting>>(
+      `${environment.baseUrl}Settings/AddGeneralSettings`, generalSetting
+    );
+  }
+
   getSubscriptions(): Observable<ServerResponse<SubscriptionSetting>> {
     return this.http.get<ServerResponse<SubscriptionSetting>>(
       `${environment.baseUrl}Settings/GetSubscriptions`
+    );
+  }
+
+  addSubscriptions(subscriptionSettings : SubscriptionSetting): Observable<ServerResponse<SubscriptionSetting>> {
+    return this.http.post<ServerResponse<SubscriptionSetting>>(
+      `${environment.baseUrl}Settings/AddSubscription`, subscriptionSettings
     );
   }
 
@@ -29,9 +41,22 @@ export class AdminSettingService {
     );
   }
 
+  addFeatureLimit(featureLimitSetting : FeatureLimitSetting[]): Observable<ServerResponse<FeatureLimitSetting>> {
+    return this.http.post<ServerResponse<FeatureLimitSetting>>(
+      `${environment.baseUrl}Settings/UpdateFeatureLimit`, featureLimitSetting
+    );
+  }
+
   getEmailNotifications(): Observable<ServerResponse<EmailNotification>> {
     return this.http.get<ServerResponse<EmailNotification>>(
       `${environment.baseUrl}Settings/GetEmailNotifications`
     );
   }
+
+  addEmailNotifications(emailSettings: EmailNotification): Observable<ServerResponse<EmailNotification>> {
+    return this.http.post<ServerResponse<EmailNotification>>(
+      `${environment.baseUrl}Settings/AddEmailNotification`, emailSettings
+    );
+  }
+  
 }

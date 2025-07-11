@@ -9,5 +9,4 @@ export interface ServerResponse<T> {
 export interface AuthServerResponse {
   token: string;
   message: string;
-  Role: string;
 }
